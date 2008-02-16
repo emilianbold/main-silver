@@ -36,29 +36,112 @@
  * 
  * Portions Copyrighted 2008 Sun Microsystems, Inc.
  */
-
 package org.netbeans.modules.ws.qaf.rest;
 
+import java.io.File;
+import java.io.IOException;
+import junit.textui.TestRunner;
+import org.netbeans.jellytools.Bundle;
 import org.netbeans.jellytools.JellyTestCase;
 import org.netbeans.jellytools.PluginsOperator;
+import org.netbeans.jellytools.WizardOperator;
+import org.netbeans.jemmy.operators.JButtonOperator;
+import org.netbeans.jemmy.operators.JCheckBoxOperator;
 
 /**
- *
+ * Test (un)installation of the RESTful Web Services plugin from Update Center
+ * 
  * @author lukas
  */
-public class InstallRESTTest extends JellyTestCase {
+public class InstallRestTest extends JellyTestCase {
 
-    private static final String REST_KIT_LABEL = "RESTful Web Services"; //NOI18N
+    static final String FLAG = ".rest.plugin.installed"; //NOI18N
+    static final String REST_KIT_LABEL = "RESTful Web Services"; //NOI18N
+    private File flagF;
 
-    public InstallRESTTest(String name) {
+    public InstallRestTest(String name) {
         super(name);
     }
+
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        if (System.getProperty("xtest.tmpdir") != null) { //NOI18N
+            //XTest execution
+            flagF = new File(System.getProperty("xtest.tmpdir"), FLAG); //NOI18N
+        } else {
+            //Internal-execution
+            flagF = new File(System.getProperty("java.io.tmpdir"), FLAG); //NOI18N
+        }
+    }
     
-    public void testInstallRest() {
+    /**
+     * Install RESTful plugin iff it is not already installed
+     * 
+     * @throws java.io.IOException
+     */
+    public void testInstallRest() throws IOException {
+        try {
+            Class.forName("org.netbeans.modules.websvc.rest.spi.RestSupport");
+        } catch (ClassNotFoundException cnfe) {
+            flagF.createNewFile();
+            installPlugin();
+        }
+    }
+
+    /**
+     * Install RESTful plugin iff it has been installed by the test.
+     * One can bypass this constraint by setting system property:
+     * "plugins.rest.forceUninstall=true"
+     * 
+     * @throws java.io.IOException
+     */
+    public void testUnInstallRest() {
+        if (flagF.exists() && flagF.isFile()) { //NOI18N
+            flagF.delete();
+            uninstallPlugin();
+        } else if (Boolean.getBoolean("plugins.rest.forceUninstall")) { //NOI18N
+            uninstallPlugin();
+        }
+    }
+
+    private void installPlugin() throws IOException {
         PluginsOperator po = PluginsOperator.invoke();
         po.selectAvailablePlugins();
-        po.reloadCatalog();
-        po.search(REST_KIT_LABEL);
-        po.install(REST_KIT_LABEL);
+        po.selectPlugins(new String[]{REST_KIT_LABEL});
+        po.install();
+        WizardOperator installerOper = po.installer();
+        installerOper.next();
+        // I accept the terms...
+        String acceptLabel = Bundle.getStringTrimmed(
+                "org.netbeans.modules.autoupdate.ui.wizards.Bundle",
+                "LicenseApprovalPanel.cbAccept.text");
+        JCheckBoxOperator acceptCheckboxOper = new JCheckBoxOperator(installerOper, acceptLabel);
+        if (!acceptCheckboxOper.isEnabled()) {
+            // wait until licence is shown and dialog is re-created
+            acceptCheckboxOper.waitComponentShowing(false);
+            // find check box again
+            acceptCheckboxOper = new JCheckBoxOperator(installerOper, acceptLabel);
+        }
+        acceptCheckboxOper.push();
+        // Install
+        String installInDialogLabel = Bundle.getStringTrimmed("org.netbeans.modules.autoupdate.ui.wizards.Bundle", "InstallUnitWizardModel_Buttons_Install");
+        new JButtonOperator(installerOper, installInDialogLabel).push();
+        installerOper.finish();
+    }
+
+    private void uninstallPlugin() {
+        PluginsOperator po = PluginsOperator.invoke();
+        po.selectInstalled();
+        po.selectPlugins(new String[]{REST_KIT_LABEL});
+        po.uninstall();
+        // Uninstall
+        String uninstallInDialogLabel = Bundle.getStringTrimmed("org.netbeans.modules.autoupdate.ui.wizards.Bundle", "UninstallUnitWizardModel_Buttons_Uninstall");
+        new JButtonOperator(po.installer(), uninstallInDialogLabel).push();
+        po.installer().finish();
+    }
+
+    public static void main(String... args) {
+        TestRunner.run(InstallRestTest.class);
     }
 }
