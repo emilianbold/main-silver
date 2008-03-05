@@ -39,19 +39,16 @@
  * made subject to such option by the copyright holder.
  */
 
-package   org.netbeans.modules.visualweb.test.components.action.ImageHyperlink;
+package   org.netbeans.modules.visualweb.test.components.action.imagehyperlink;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import java.io.File;
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.io.IOException;
-
 import org.netbeans.modules.visualweb.gravy.*;
 import org.netbeans.modules.visualweb.gravy.ProjectNavigatorOperator;
-import org.netbeans.modules.visualweb.gravy.dataconnectivity.ServerNavigatorOperator;
 import org.netbeans.modules.visualweb.gravy.toolbox.PaletteContainerOperator;
 import org.netbeans.modules.visualweb.gravy.designer.DesignerPaneOperator;
 import org.netbeans.modules.visualweb.gravy.properties.SheetTableOperator;
@@ -212,17 +209,15 @@ public class AcceptanceTest extends RaveTestCase {
         JEditorPaneOperator editor = new JEditorPaneOperator(
                                         RaveWindowOperator.getDefaultRave(), "public class " + _page1);
         editor.requestFocus();
-        editor.pushKey(KeyEvent.VK_ENTER);
-        String url="http://bsqe-giant.sfbay.sun.com/RaveHWScheduler/index.cgi";
-        editor.typeText("imageHyperlink1.setUrl(\"http://bsqe-giant.sfbay.sun.com/RaveHWScheduler/index.cgi\");");
-        editor.pushKey(KeyEvent.VK_ENTER);
+        editor.setText("log(\"Button action performed\");\n");
         
         // Open context menuitem, Reformat code
         Util.wait(1000);
         editor.clickForPopup(300,300);
         new JPopupMenuOperator().pushMenu(_reformatCode);
-        
         TestUtils.wait(1000);
+        log("Java Editor Dump:");
+        log(editor.getText());
         // Switch to design panel
         designer.makeComponentVisible();
       
