@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#echo "cc"
+#echo "CC"
 
 allparams=$@
 params=""
@@ -74,9 +74,9 @@ mkdir -p `dirname $MY_PP_TEMP/$relPath/${file}`
 
 # preprocessing file
 if [ ! -z "${params}" ]; then
-    /usr/bin/cc -Wno-deprecated -E ${params}${currentDir}/${file} 2>/dev/null > $MY_PP_TEMP/$relPath/${file}
+    /usr/bin/CC -Wno-deprecated -E ${params}${currentDir}/${file} 2>/dev/null > $MY_PP_TEMP/$relPath/${file}
 else
-    /usr/bin/cc -Wno-deprecated -E ${currentDir}/${file} 2>/dev/null > $MY_PP_TEMP/$relPath/${file}
+    /usr/bin/CC -Wno-deprecated -E ${currentDir}/${file} 2>/dev/null > $MY_PP_TEMP/$relPath/${file}
 fi
 
-/usr/bin/cc ${allparams}
+/usr/bin/CC ${allparams}
