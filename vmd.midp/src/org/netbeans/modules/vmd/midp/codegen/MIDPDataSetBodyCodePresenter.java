@@ -47,7 +47,8 @@ import org.netbeans.modules.vmd.api.codegen.CodeClassLevelPresenter;
 import org.netbeans.modules.vmd.api.codegen.CodeReferencePresenter;
 import org.netbeans.modules.vmd.api.codegen.InitCodeGenerator;
 import org.netbeans.modules.vmd.api.codegen.MultiGuardedSection;
-import org.netbeans.modules.vmd.midp.components.general.ClassCD;
+import org.netbeans.modules.vmd.api.model.DesignComponent;
+import org.netbeans.modules.vmd.api.model.Presenter;
 import org.netbeans.modules.vmd.midp.components.general.ClassSupport;
 import org.openide.util.Exceptions;
 
@@ -55,14 +56,14 @@ import org.openide.util.Exceptions;
  *
  * @author Karol Harezlak
  */
-public final class MIDPDataSetBodyCodePresenter {
+public final class MidpDataSetBodyCodePresenter {
 
     private static final String INSTANCE_NAME = "__instancename__"; //NOI18N
     private static final String START_GUARDED_BLOCK = "__start_guardedblock__"; //NOI18N
     private static final String STOP_GUARDED_BLOCK = "__stop_guardedblock__"; //NOI18N
     //private final String bodyTemplatePath;
 
-    public static CodeClassLevelPresenter create(final String bodyTemplatePath) {
+    public static Presenter create(final String bodyTemplatePath) {
         return new CodeClassLevelPresenter.Adapter() {
 
             @Override
@@ -88,8 +89,8 @@ public final class MIDPDataSetBodyCodePresenter {
                 for (CodeClassInitHeaderFooterPresenter footer : headersFooters) {
                     footer.generateClassInitializationFooter(section);
                 }
-
-                createBodyCode(section);
+                section.getWriter().write(directAccess + " = new " + getInstanceName(getComponent()) + "();\n");
+                section.getWriter().commit();
 
                 section.switchToEditable(getComponent().getComponentID() + "-postInit"); // NOI18N
                 section.getWriter().write(" // write post-init user code here\n").commit(); // NOI18N
@@ -98,14 +99,17 @@ public final class MIDPDataSetBodyCodePresenter {
                 section.getWriter().write("}\n"); // NOI18N
                 section.getWriter().write("return " + directAccess + ";\n"); // NOI18N
                 section.getWriter().write("}\n"); // NOI18N
+                createBodyCode(section);
+                section.switchToEditable(getComponent().getComponentID() + "end"); //NOI18N
+                section.getWriter().commit();
+                section.switchToGuarded();
                 section.getWriter().write("//</editor-fold>\n").commit(); // NOI18N
-
                 section.close();
             }
 
             private void createBodyCode(final MultiGuardedSection section) {
                 try {
-                    InputStream is = MIDPDataSetBodyCodePresenter.class.getClassLoader().getResourceAsStream(bodyTemplatePath);
+                    InputStream is = MidpDataSetBodyCodePresenter.class.getClassLoader().getResourceAsStream(bodyTemplatePath);
                     BufferedReader in = new BufferedReader(new InputStreamReader(is));
                     String line = in.readLine();
                     int i = 0;
@@ -114,10 +118,9 @@ public final class MIDPDataSetBodyCodePresenter {
                             if (!section.isGuarded()) {
                                 section.switchToGuarded();
                             }
-
                             while ((line = in.readLine()) != null && !line.contains(STOP_GUARDED_BLOCK)) {
                                 if (line.contains(INSTANCE_NAME)) {
-                                    section.getWriter().write(line.replace(INSTANCE_NAME, (String) getComponent().readProperty(ClassCD.PROP_INSTANCE_NAME).getPrimitiveValue()) + "\n"); //NOI18N
+                                    section.getWriter().write(line.replace(INSTANCE_NAME, getInstanceName(getComponent())) + "\n"); //NOI18N
                                 } else if (!line.startsWith("#")) { //NOI18N
                                     section.getWriter().write(line + "\n"); //NOI18N
                                 }
@@ -144,7 +147,16 @@ public final class MIDPDataSetBodyCodePresenter {
             ;
         };
     }
-    
-    private MIDPDataSetBodyCodePresenter() {
+
+    private static String getInstanceName(DesignComponent component) {
+        String instanceName = CodeReferencePresenter.generateDirectAccessCode(component);
+        instanceName = instanceName.substring(0, 1).toUpperCase() + instanceName.substring(1);
+        if (CodeReferencePresenter.generateTypeCode(component).equals(instanceName)) {
+            instanceName = instanceName + "_"; //NOI18N
+        }
+        return instanceName;
+    }
+
+    private MidpDataSetBodyCodePresenter() {
     }
 }
