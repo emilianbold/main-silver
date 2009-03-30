@@ -54,7 +54,7 @@ import org.netbeans.modules.csl.editor.InstantRenameAction;
 import org.netbeans.modules.csl.editor.ToggleBlockCommentAction;
 import org.netbeans.modules.editor.NbEditorDocument;
 import org.netbeans.modules.editor.NbEditorKit;
-import org.netbeans.modules.html.editor.HTMLAutoCompletion;
+import org.netbeans.modules.html.editor.HtmlAutoCompletion;
 import org.netbeans.modules.web.core.syntax.deprecated.Jsp11Syntax;
 import org.netbeans.modules.web.core.syntax.deprecated.ELDrawLayerFactory;
 import java.awt.event.ActionEvent;
@@ -62,7 +62,7 @@ import java.beans.*;
 import javax.swing.Action;
 import javax.swing.SwingUtilities;
 import javax.swing.text.*;
-import org.netbeans.api.html.lexer.HTMLTokenId;
+import org.netbeans.api.html.lexer.HtmlTokenId;
 import org.netbeans.api.java.lexer.JavaTokenId;
 import org.netbeans.api.lexer.TokenHierarchy;
 import org.netbeans.api.lexer.TokenSequence;
@@ -77,19 +77,19 @@ import org.openide.util.Exceptions;
 import org.openide.util.WeakListeners;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataObject;
-import org.netbeans.editor.ext.html.HTMLSyntax;
+import org.netbeans.editor.ext.html.HtmlSyntax;
 import org.netbeans.modules.editor.java.JavaKit;
-import org.netbeans.modules.web.core.syntax.spi.JSPColoringData;
+import org.netbeans.modules.web.core.syntax.spi.JspColoringData;
 import org.netbeans.api.jsp.lexer.JspTokenId;
 import org.netbeans.api.lexer.InputAttributes;
 import org.netbeans.api.lexer.LanguagePath;
 import org.netbeans.editor.BaseKit.InsertBreakAction;
 import org.netbeans.editor.ext.ExtKit.ExtDefaultKeyTypedAction;
 import org.netbeans.editor.ext.ExtKit.ExtDeleteCharAction;
-import org.netbeans.editor.ext.html.HTMLLexerFormatter;
+import org.netbeans.editor.ext.html.HtmlLexerFormatter;
 import org.netbeans.editor.ext.html.parser.SyntaxParser;
 import org.netbeans.modules.editor.indent.api.Reformat;
-import org.netbeans.modules.web.core.syntax.formatting.JSPLexerFormatter;
+import org.netbeans.modules.web.core.syntax.formatting.JspLexerFormatter;
 import org.netbeans.spi.lexer.MutableTextInput;
 
 /**
@@ -99,7 +99,7 @@ import org.netbeans.spi.lexer.MutableTextInput;
  * @author Marek.Fukala@Sun.COM
  * @version 1.5
  */
-public class JSPKit extends NbEditorKit implements org.openide.util.HelpCtx.Provider{
+public class JspKit extends NbEditorKit implements org.openide.util.HelpCtx.Provider{
 
     public static final String JSP_MIME_TYPE = "text/x-jsp"; // NOI18N
     public static final String TAG_MIME_TYPE = "text/x-tag"; // NOI18N
@@ -111,17 +111,17 @@ public class JSPKit extends NbEditorKit implements org.openide.util.HelpCtx.Prov
     private final String mimeType;
 
     // called from the XML layer
-    private static JSPKit createKitForJsp() {
-        return new JSPKit(JSP_MIME_TYPE);
+    private static JspKit createKitForJsp() {
+        return new JspKit(JSP_MIME_TYPE);
     }
 
     // called from the XML layer
-    private static JSPKit createKitForTag() {
-        return new JSPKit(TAG_MIME_TYPE);
+    private static JspKit createKitForTag() {
+        return new JspKit(TAG_MIME_TYPE);
     }
 
     /** Default constructor */
-    public JSPKit(String mimeType) {
+    public JspKit(String mimeType) {
         super();
         this.mimeType = mimeType;
     }
@@ -133,7 +133,7 @@ public class JSPKit extends NbEditorKit implements org.openide.util.HelpCtx.Prov
 
     @Override
     public Object clone() {
-        return new JSPKit(mimeType);
+        return new JspKit(mimeType);
     }
 
     /** Creates a new instance of the syntax coloring parser */
@@ -152,7 +152,7 @@ public class JSPKit extends NbEditorKit implements org.openide.util.HelpCtx.Prov
         FileObject fobj = (dobj != null) ? dobj.getPrimaryFile() : null;
 
         // tag library coloring data stuff
-        JSPColoringData data = JspUtils.getJSPColoringData(fobj);
+        JspColoringData data = JspUtils.getJSPColoringData(fobj);
         // construct the listener
         PropertyChangeListener pList = new ColoringListener(doc, data, newSyntax);
         // attach the listener
@@ -190,7 +190,7 @@ public class JSPKit extends NbEditorKit implements org.openide.util.HelpCtx.Prov
         private Jsp11Syntax syntax;
         //private JspDataObject jspdo;
 
-        public ColoringListener(Document doc, JSPColoringData data, Jsp11Syntax syntax) {
+        public ColoringListener(Document doc, JspColoringData data, Jsp11Syntax syntax) {
             this.doc = doc;
             // we must keep the reference to the structure we are listening on so it's not gc'ed
             this.parsedDataRef = data;
@@ -213,7 +213,7 @@ public class JSPKit extends NbEditorKit implements org.openide.util.HelpCtx.Prov
                 syntax = null; // should help garbage collection
                 return;
             }
-            if (JSPColoringData.PROP_COLORING_CHANGE.equals(evt.getPropertyName())) {
+            if (JspColoringData.PROP_COLORING_CHANGE.equals(evt.getPropertyName())) {
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
                         NbEditorDocument nbdoc = (NbEditorDocument)doc;
@@ -233,17 +233,17 @@ public class JSPKit extends NbEditorKit implements org.openide.util.HelpCtx.Prov
     private static class LexerColoringListener implements PropertyChangeListener {
 
         private Document doc;
-        private JSPColoringData data;
+        private JspColoringData data;
         private JspParseData jspParseData;
 
-        private LexerColoringListener(Document doc, JSPColoringData data, JspParseData jspParseData) {
+        private LexerColoringListener(Document doc, JspColoringData data, JspParseData jspParseData) {
             this.doc = doc;
-            this.data = data; //hold ref to JSPColoringData so LCL is not GC'ed
+            this.data = data; //hold ref to JspColoringData so LCL is not GC'ed
             this.jspParseData = jspParseData;
         }
 
         public void propertyChange(PropertyChangeEvent evt) {
-            if (JSPColoringData.PROP_PARSING_SUCCESSFUL.equals(evt.getPropertyName())) {
+            if (JspColoringData.PROP_PARSING_SUCCESSFUL.equals(evt.getPropertyName())) {
                 if(!jspParseData.initialized()) {
                     SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
@@ -257,9 +257,9 @@ public class JSPKit extends NbEditorKit implements org.openide.util.HelpCtx.Prov
                     }
                 });
                 }
-            } else if (JSPColoringData.PROP_COLORING_CHANGE.equals(evt.getPropertyName())) {
+            } else if (JspColoringData.PROP_COLORING_CHANGE.equals(evt.getPropertyName())) {
                 //THC.rebuild() must run under document write lock. Since it is not guaranteed that the
-                //event from the JSPColoringData is not fired under document read lock, synchronous call
+                //event from the JspColoringData is not fired under document read lock, synchronous call
                 //to write lock could deadlock. So the rebuild is better called asynchronously.
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
@@ -293,7 +293,7 @@ public class JSPKit extends NbEditorKit implements org.openide.util.HelpCtx.Prov
             //create a special javasyntax patched for use in JSPs (fix of #55628)
             return new JavaSyntax(sourceLevel, true);
         } else {
-            return new HTMLSyntax();
+            return new HtmlSyntax();
         }
     }
 
@@ -307,7 +307,7 @@ public class JSPKit extends NbEditorKit implements org.openide.util.HelpCtx.Prov
     private void initLexerColoringListener(Document doc) {
         DataObject dobj = NbEditorUtilities.getDataObject(doc);
         FileObject fobj = (dobj != null) ? dobj.getPrimaryFile() : null;
-        JSPColoringData data = JspUtils.getJSPColoringData(fobj);
+        JspColoringData data = JspUtils.getJSPColoringData(fobj);
 
         if(data == null) {
             return ;
@@ -330,7 +330,7 @@ public class JSPKit extends NbEditorKit implements org.openide.util.HelpCtx.Prov
     // <RAVE> #62993
     // Implement HelpCtx.Provider to provide help for CloneableEditor
     public org.openide.util.HelpCtx getHelpCtx() {
-        return new org.openide.util.HelpCtx(JSPKit.class);
+        return new org.openide.util.HelpCtx(JspKit.class);
     }
 
     static KeystrokeHandler getBracketCompletion(Document doc, int offset) {
@@ -349,7 +349,7 @@ public class JSPKit extends NbEditorKit implements org.openide.util.HelpCtx.Prov
      * Returns true if bracket completion is enabled in options.
      */
     private static boolean completionSettingEnabled() {
-        //return ((Boolean)Settings.getValue(JSPKit.class, JavaSettingsNames.PAIR_CHARACTERS_COMPLETION)).booleanValue();
+        //return ((Boolean)Settings.getValue(JspKit.class, JavaSettingsNames.PAIR_CHARACTERS_COMPLETION)).booleanValue();
         return true;
     }
 
@@ -484,7 +484,7 @@ public class JSPKit extends NbEditorKit implements org.openide.util.HelpCtx.Prov
             //handle reformat
             handleTagClosingSymbol(doc, dotPos, str.charAt(0));
             //handle html quotations completion
-            HTMLAutoCompletion.charInserted(doc, dotPos, caret, str.charAt(0));
+            HtmlAutoCompletion.charInserted(doc, dotPos, caret, str.charAt(0));
         }
 
         @Override
@@ -538,8 +538,8 @@ public class JSPKit extends NbEditorKit implements org.openide.util.HelpCtx.Prov
         private void handleTagClosingSymbol(final BaseDocument doc, final int dotPos, char lastChar) throws BadLocationException {
             if (lastChar == '>') {
                 LanguagePath jspLanguagePath = LanguagePath.get(JspTokenId.language());
-                final LanguagePath htmlInJSPPath = LanguagePath.get(jspLanguagePath, HTMLTokenId.language());
-                HTMLLexerFormatter htmlFormatter = new HTMLLexerFormatter(htmlInJSPPath);
+                final LanguagePath htmlInJSPPath = LanguagePath.get(jspLanguagePath, HtmlTokenId.language());
+                HtmlLexerFormatter htmlFormatter = new HtmlLexerFormatter(htmlInJSPPath);
 
                 if (htmlFormatter.isJustAfterClosingTag(doc, dotPos)) {
                       HtmlIndenter.indentEndTag(doc, htmlInJSPPath, dotPos, null);
@@ -548,7 +548,7 @@ public class JSPKit extends NbEditorKit implements org.openide.util.HelpCtx.Prov
                     //We cannot run the jsp reformatter from this thread since the document
                     //is already atomically locked so doing the source lock here is deadlock prone.
                     //There doesn't seem to be an elegant way how to do this so usign a workaround
-                    JSPLexerFormatter jspFormatter = new JSPLexerFormatter();
+                    JspLexerFormatter jspFormatter = new JspLexerFormatter();
                     if (jspFormatter.isJustAfterClosingTag(doc, dotPos)) {
 
                         SwingUtilities.invokeLater(new Runnable() {

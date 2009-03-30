@@ -56,7 +56,7 @@ import org.openide.util.datatransfer.ExTransferable;
  *
  * @author Libor Kotouc
  */
-public final class HTMLPaletteFactory {
+public final class HtmlPaletteFactory {
 
     public static final String HTML_PALETTE_FOLDER = "HTMLPalette";
 
@@ -65,14 +65,14 @@ public final class HTMLPaletteFactory {
     public static PaletteController getPalette() throws IOException {
 
         if (palette == null)
-            palette = PaletteFactory.createPalette(HTML_PALETTE_FOLDER, new HTMLPaletteActions(), null, new HTMLDragAndDropHandler());
+            palette = PaletteFactory.createPalette(HTML_PALETTE_FOLDER, new HtmlPaletteActions(), null, new HtmlDragAndDropHandler());
             
         return palette;
     }
 
-    private static class HTMLDragAndDropHandler extends DragAndDropHandler {
+    private static class HtmlDragAndDropHandler extends DragAndDropHandler {
 
-        public HTMLDragAndDropHandler() {
+        public HtmlDragAndDropHandler() {
             super( true );
         }
         

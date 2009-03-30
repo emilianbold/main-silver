@@ -52,11 +52,11 @@ import org.openide.util.actions.CallableSystemAction;
  *
  * @author lk155162
  */
-public class HTMLPaletteCustomizerAction extends CallableSystemAction {
+public class HtmlPaletteCustomizerAction extends CallableSystemAction {
 
     private static String name;
     
-    public HTMLPaletteCustomizerAction () {
+    public HtmlPaletteCustomizerAction () {
         putValue("noIconInMenu", Boolean.TRUE); // NOI18N
     }
 
@@ -70,7 +70,7 @@ public class HTMLPaletteCustomizerAction extends CallableSystemAction {
      */
     public String getName() {
         if (name == null)
-            name = NbBundle.getBundle(HTMLPaletteCustomizerAction.class).getString("ACT_OpenHTMLCustomizer"); // NOI18N
+            name = NbBundle.getBundle(HtmlPaletteCustomizerAction.class).getString("ACT_OpenHTMLCustomizer"); // NOI18N
         
         return name;
     }
@@ -87,7 +87,7 @@ public class HTMLPaletteCustomizerAction extends CallableSystemAction {
      */
     public void performAction() {
         try {
-            HTMLPaletteFactory.getPalette().showCustomizer();
+            HtmlPaletteFactory.getPalette().showCustomizer();
         }
         catch (IOException ioe) {
             Logger.getLogger("global").log(Level.WARNING, null, ioe);
