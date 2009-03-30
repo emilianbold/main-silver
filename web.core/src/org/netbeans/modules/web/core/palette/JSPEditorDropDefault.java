@@ -49,11 +49,11 @@ import org.openide.text.ActiveEditorDrop;
  *
  * @author Libor Kotouc
  */
-public class JSPEditorDropDefault implements ActiveEditorDrop {
+public class JspEditorDropDefault implements ActiveEditorDrop {
 
     String body;
 
-    public JSPEditorDropDefault(String body) {
+    public JspEditorDropDefault(String body) {
         this.body = body;
     }
 
@@ -62,7 +62,7 @@ public class JSPEditorDropDefault implements ActiveEditorDrop {
             return false;
 
         try {
-            JSPPaletteUtilities.insert(body, (JTextComponent)targetComponent);
+            JspPaletteUtilities.insert(body, (JTextComponent)targetComponent);
         }
         catch (BadLocationException ble) {
             return false;
