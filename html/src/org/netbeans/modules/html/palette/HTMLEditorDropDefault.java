@@ -50,11 +50,11 @@ import org.openide.text.ActiveEditorDrop;
  *
  * @author Libor Kotouc
  */
-public class HTMLEditorDropDefault implements ActiveEditorDrop {
+public class HtmlEditorDropDefault implements ActiveEditorDrop {
 
     String body;
 
-    public HTMLEditorDropDefault(String body) {
+    public HtmlEditorDropDefault(String body) {
         this.body = body;
     }
 
@@ -64,7 +64,7 @@ public class HTMLEditorDropDefault implements ActiveEditorDrop {
             return false;
 
         try {
-            HTMLPaletteUtilities.insert(body, (JTextComponent)targetComponent);
+            HtmlPaletteUtilities.insert(body, (JTextComponent)targetComponent);
         }
         catch (BadLocationException ble) {
             return false;
