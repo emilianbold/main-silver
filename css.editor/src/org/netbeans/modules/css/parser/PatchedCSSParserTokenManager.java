@@ -38,13 +38,13 @@
  */
 package org.netbeans.modules.css.parser;
 
-public class PatchedCSSParserTokenManager extends CSSParserTokenManager {
+public class PatchedCssParserTokenManager extends CssParserTokenManager {
 
-    public PatchedCSSParserTokenManager(CharStream stream) {
+    public PatchedCssParserTokenManager(CharStream stream) {
         super(stream);
     }
 
-    public PatchedCSSParserTokenManager(CharStream stream, int lexState) {
+    public PatchedCssParserTokenManager(CharStream stream, int lexState) {
         super(stream, lexState);
     }
 

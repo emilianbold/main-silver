@@ -51,7 +51,7 @@ import org.netbeans.modules.parsing.spi.SchedulerEvent;
  *
  * @author marek
  */
-public class CSSOccurancesFinder extends OccurrencesFinder {
+public class CssOccurancesFinder extends OccurrencesFinder {
 
     public void setCaretPosition(int position) {
         
