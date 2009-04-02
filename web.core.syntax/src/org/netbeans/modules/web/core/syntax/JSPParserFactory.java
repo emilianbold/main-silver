@@ -49,7 +49,7 @@ import org.netbeans.modules.web.core.syntax.gsf.JspGSFParser;
  *
  * @author Jan Lahoda
  */
-public class JSPParserFactory extends ParserFactory {
+public class JspParserFactory extends ParserFactory {
 
     @Override
     public Parser createParser(Collection<Snapshot> snapshots) {
