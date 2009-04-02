@@ -45,7 +45,7 @@ import org.netbeans.editor.AcceptorFactory;
  *
  * @author marekfukala
  */
-public class HTMLSettingsFactory {
+public class HtmlSettingsFactory {
 
     public static final Acceptor HTML_IDENTIFIER_ACCEPTOR =
             new Acceptor() {
