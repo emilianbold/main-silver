@@ -49,11 +49,11 @@ import org.netbeans.modules.css.editor.Css;
 import org.openide.filesystems.FileObject;
 
 
-public class CSSElement implements ElementHandle {
+public class CssElement implements ElementHandle {
 
     private String name;
 
-    CSSElement(String name) {
+    CssElement(String name) {
         this.name = name;
     }
 

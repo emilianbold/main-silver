@@ -63,9 +63,9 @@ import org.netbeans.spi.lexer.TokenFactory;
  * @version 1.00
  */
 
-public final class HTMLLexer implements Lexer<HTMLTokenId> {
+public final class HtmlLexer implements Lexer<HTMLTokenId> {
     
-    private static final Logger LOGGER = Logger.getLogger(HTMLLexer.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(HtmlLexer.class.getName());
     private static final boolean LOG = Boolean.getBoolean("j2ee_lexer_debug"); //NOI18N
     
     private static final int EOF = LexerInput.EOF;
@@ -204,7 +204,7 @@ public final class HTMLLexer implements Lexer<HTMLTokenId> {
         // make sure you update the optimized firstchar look in isJavaScriptArgument
     }
     
-    public HTMLLexer(LexerRestartInfo<HTMLTokenId> info) {
+    public HtmlLexer(LexerRestartInfo<HTMLTokenId> info) {
         this.input = info.input();
         this.tokenFactory = info.tokenFactory();
         if (info.state() == null) {
