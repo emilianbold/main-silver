@@ -52,9 +52,9 @@ import org.openide.util.datatransfer.ExTransferable;
  *
  * @author lk155162
  */
-public class JSPDragAndDropHandler extends DragAndDropHandler {
+public class JspDragAndDropHandler extends DragAndDropHandler {
 
-    public JSPDragAndDropHandler() {
+    public JspDragAndDropHandler() {
     }
 
     public void customize(ExTransferable t, Lookup item) {
@@ -62,10 +62,10 @@ public class JSPDragAndDropHandler extends DragAndDropHandler {
         ActiveEditorDrop drop = (ActiveEditorDrop) item.lookup(ActiveEditorDrop.class);
         if (drop == null) {
             String body = (String) item.lookup(String.class);
-            drop = new JSPEditorDropDefault(body);
+            drop = new JspEditorDropDefault(body);
         }
         
-        JSPPaletteItemTransferable s = new JSPPaletteItemTransferable(drop);
+        JspPaletteItemTransferable s = new JspPaletteItemTransferable(drop);
         t.put(s);
         
     }
@@ -80,11 +80,11 @@ public class JSPDragAndDropHandler extends DragAndDropHandler {
         return false;
     }
     
-    private static class JSPPaletteItemTransferable extends ExTransferable.Single {
+    private static class JspPaletteItemTransferable extends ExTransferable.Single {
         
         private ActiveEditorDrop drop;
 
-        JSPPaletteItemTransferable(ActiveEditorDrop drop) {
+        JspPaletteItemTransferable(ActiveEditorDrop drop) {
             super(ActiveEditorDrop.FLAVOR);
             
             this.drop = drop;

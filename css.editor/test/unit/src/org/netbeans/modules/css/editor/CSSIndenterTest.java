@@ -51,21 +51,21 @@ import org.netbeans.modules.csl.api.Formatter;
 import org.netbeans.modules.css.editor.indent.CssIndentTaskFactory;
 import org.netbeans.modules.css.editor.test.TestBase;
 import org.netbeans.modules.css.formatting.api.support.AbstractIndenter;
-import org.netbeans.modules.css.lexer.api.CSSTokenId;
-import org.netbeans.modules.html.editor.HTMLKit;
+import org.netbeans.modules.css.lexer.api.CssTokenId;
+import org.netbeans.modules.html.editor.HtmlKit;
 import org.netbeans.modules.html.editor.NbReaderProvider;
 import org.netbeans.modules.html.editor.indent.HtmlIndentTaskFactory;
 import org.netbeans.modules.java.source.save.Reformatter;
 import org.netbeans.modules.web.core.syntax.EmbeddingProviderImpl;
-import org.netbeans.modules.web.core.syntax.JSPKit;
+import org.netbeans.modules.web.core.syntax.JspKit;
 import org.netbeans.modules.web.core.syntax.indent.JspIndentTaskFactory;
 import org.openide.cookies.EditorCookie;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataObject;
 
-public class CSSIndenterTest extends TestBase {
+public class CssIndenterTest extends TestBase {
 
-    public CSSIndenterTest(String name) {
+    public CssIndenterTest(String name) {
         super(name);
     }
 
@@ -76,11 +76,11 @@ public class CSSIndenterTest extends TestBase {
         AbstractIndenter.inUnitTestRun = true;
 
         CssIndentTaskFactory cssFactory = new CssIndentTaskFactory();
-        MockMimeLookup.setInstances(MimePath.parse("text/x-css"), cssFactory, CSSTokenId.language());
+        MockMimeLookup.setInstances(MimePath.parse("text/x-css"), cssFactory, CssTokenId.language());
         JspIndentTaskFactory jspReformatFactory = new JspIndentTaskFactory();
-        MockMimeLookup.setInstances(MimePath.parse("text/x-jsp"), new JSPKit("text/x-jsp"), jspReformatFactory, new EmbeddingProviderImpl.Factory(), JspTokenId.language());
+        MockMimeLookup.setInstances(MimePath.parse("text/x-jsp"), new JspKit("text/x-jsp"), jspReformatFactory, new EmbeddingProviderImpl.Factory(), JspTokenId.language());
         HtmlIndentTaskFactory htmlReformatFactory = new HtmlIndentTaskFactory();
-        MockMimeLookup.setInstances(MimePath.parse("text/html"), htmlReformatFactory, new HTMLKit("text/x-jsp"), HTMLTokenId.language());
+        MockMimeLookup.setInstances(MimePath.parse("text/html"), htmlReformatFactory, new HtmlKit("text/x-jsp"), HTMLTokenId.language());
         Reformatter.Factory factory = new Reformatter.Factory();
         MockMimeLookup.setInstances(MimePath.parse("text/x-java"), factory, JavaTokenId.language());
     }
@@ -151,6 +151,15 @@ public class CSSIndenterTest extends TestBase {
         reformatFileContents("testfiles/format2.html", new IndentPrefs(4,4));
     }
 
+    public void testFormattingCase1() throws Exception {
+        //#160344
+        reformatFileContents("testfiles/case001.css", new IndentPrefs(4,4));
+    }
+
+    public void testFormattingCase2() throws Exception {
+        reformatFileContents("testfiles/case002.css", new IndentPrefs(4,4));
+    }
+
     public void testFormattingNetBeansCSS() throws Exception {
         reformatFileContents("testfiles/netbeans.css",new IndentPrefs(4,4));
     }
@@ -176,6 +185,19 @@ public class CSSIndenterTest extends TestBase {
         insertNewline("a{^}", "a{\n    ^\n}", null);
         insertNewline("a{\n/**/^\n}", "a{\n/**/\n^\n}", null);
         insertNewline("a{\n     /*^comment\n     */\n}", "a{\n     /*\n     ^comment\n     */\n}", null);
+
+        //#160344
+        insertNewline(
+                "xxxxxh2 { color:aqua /* aaa^bbb\nccc*/ ;}",
+                "xxxxxh2 { color:aqua /* aaa\n                     ^bbb\nccc*/ ;}", null);
+        insertNewline(
+                "xxxxxh2 { color:aqua /* aaa^*/ ;}",
+                "xxxxxh2 { color:aqua /* aaa\n              ^*/ ;}", null);
+
+        //#161642
+        insertNewline(
+                "xxxxxh2 { color:aqua /* aaa^*/;}",
+                "xxxxxh2 { color:aqua /* aaa\n              ^*/;}", null);
     }
 
 }
