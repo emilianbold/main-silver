@@ -56,7 +56,7 @@ import org.netbeans.modules.editor.structure.formatting.JoinedTokenSequence;
  * @author Tomasz.Slota@Sun.COM
  */
 
-public class HTMLLexerFormatter extends TagBasedLexerFormatter {
+public class HtmlLexerFormatter extends TagBasedLexerFormatter {
     /** 
      * Setting this flag in document property will make the HTML formatter act
      * as the top-level language formatter. It is useful for Ruby and PHP editors.
@@ -68,7 +68,7 @@ public class HTMLLexerFormatter extends TagBasedLexerFormatter {
     private final LanguagePath languagePath;
     
     /** Creates a new instance of HTMLFormater */
-    public HTMLLexerFormatter(LanguagePath languagePath) {
+    public HtmlLexerFormatter(LanguagePath languagePath) {
         this.languagePath = languagePath;
     }
     
@@ -163,7 +163,7 @@ public class HTMLLexerFormatter extends TagBasedLexerFormatter {
     }
     
     @Override protected boolean isClosingTagRequired(BaseDocument doc, String tagName) {
-	HTMLSyntaxSupport htmlsup = HTMLSyntaxSupport.get(doc);
+	HtmlSyntaxSupport htmlsup = HtmlSyntaxSupport.get(doc);
         DTD dtd = htmlsup.getDTD();
         
         if (dtd == null){
