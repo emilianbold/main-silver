@@ -52,7 +52,7 @@ import org.netbeans.api.lexer.LanguagePath;
 import org.netbeans.api.lexer.Token;
 import org.netbeans.api.lexer.TokenHierarchy;
 import org.netbeans.api.lexer.TokenSequence;
-import org.netbeans.editor.ext.html.HTMLSyntaxSupport;
+import org.netbeans.editor.ext.html.HtmlSyntaxSupport;
 import org.netbeans.editor.ext.html.dtd.DTD.Element;
 import org.netbeans.editor.ext.html.parser.AstNode;
 import org.netbeans.editor.ext.html.parser.AstNodeUtils;
@@ -76,7 +76,7 @@ import org.openide.util.Exceptions;
  *
  * @author Marek Fukala
  */
-public class HTMLBracesMatching implements BracesMatcher, BracesMatcherFactory {
+public class HtmlBracesMatching implements BracesMatcher, BracesMatcherFactory {
 
     private MatcherContext context;
     private LanguagePath htmlLanguagePath;
@@ -84,11 +84,11 @@ public class HTMLBracesMatching implements BracesMatcher, BracesMatcherFactory {
     private static final String BLOCK_COMMENT_END = "-->"; //NOI18N
     static boolean testMode = false;
 
-    public HTMLBracesMatching() {
+    public HtmlBracesMatching() {
         this(null, null);
     }
 
-    private HTMLBracesMatching(MatcherContext context, LanguagePath htmlLanguagePath) {
+    private HtmlBracesMatching(MatcherContext context, LanguagePath htmlLanguagePath) {
         this.context = context;
         this.htmlLanguagePath = htmlLanguagePath;
     }
@@ -99,7 +99,7 @@ public class HTMLBracesMatching implements BracesMatcher, BracesMatcherFactory {
             if (!testMode && MatcherContext.isTaskCanceled()) {
                 return null;
             }
-            TokenSequence ts = HTMLSyntaxSupport.getJoinedHtmlSequence(context.getDocument());
+            TokenSequence ts = HtmlSyntaxSupport.getJoinedHtmlSequence(context.getDocument());
             TokenHierarchy th = TokenHierarchy.get(context.getDocument());
 
             if (ts.language() == HTMLTokenId.language()) {
@@ -186,9 +186,9 @@ public class HTMLBracesMatching implements BracesMatcher, BracesMatcherFactory {
                         return;
                     }
 
-                    if (!source.getMimeType().equals(HTMLKit.HTML_MIME_TYPE)) {
+                    if (!source.getMimeType().equals(HtmlKit.HTML_MIME_TYPE)) {
                         //find embedded result iterator
-                        resultIterator = Utils.getResultIterator(resultIterator, HTMLKit.HTML_MIME_TYPE);
+                        resultIterator = Utils.getResultIterator(resultIterator, HtmlKit.HTML_MIME_TYPE);
                     }
 
                     if (resultIterator == null) {
@@ -197,6 +197,9 @@ public class HTMLBracesMatching implements BracesMatcher, BracesMatcherFactory {
                     }
 
                     HtmlParserResult result = (HtmlParserResult) resultIterator.getParserResult();
+                    if(result == null) {
+                        return ;
+                    }
                     AstNode root = result.root();
 
                     int searched = result.getSnapshot().getEmbeddedOffset(context.getSearchOffset());
@@ -264,7 +267,7 @@ public class HTMLBracesMatching implements BracesMatcher, BracesMatcherFactory {
 
     //BracesMatcherFactory implementation
     public BracesMatcher createMatcher(final MatcherContext context) {
-        final HTMLBracesMatching[] ret = {null};
+        final HtmlBracesMatching[] ret = {null};
         context.getDocument().render(new Runnable() {
 
             public void run() {
@@ -272,7 +275,7 @@ public class HTMLBracesMatching implements BracesMatcher, BracesMatcherFactory {
 
                 //test if the html sequence is the top level one
                 if (hierarchy.tokenSequence().language() == HTMLTokenId.language()) {
-                    ret[0] = new HTMLBracesMatching(context, hierarchy.tokenSequence().languagePath());
+                    ret[0] = new HtmlBracesMatching(context, hierarchy.tokenSequence().languagePath());
                     return;
                 }
 
@@ -281,7 +284,7 @@ public class HTMLBracesMatching implements BracesMatcher, BracesMatcherFactory {
                 for (TokenSequence ts : ets) {
                     Language language = ts.language();
                     if (language == HTMLTokenId.language()) {
-                        ret[0] = new HTMLBracesMatching(context, ts.languagePath());
+                        ret[0] = new HtmlBracesMatching(context, ts.languagePath());
                         return;
                     }
                 }
