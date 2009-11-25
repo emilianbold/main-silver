@@ -1,7 +1,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright 2009 Sun Microsystems, Inc. All rights reserved.
+ * Copyright 1997-2009 Sun Microsystems, Inc. All rights reserved.
  *
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common
@@ -21,6 +21,12 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
+ * Contributor(s):
+ *
+ * The Original Software is NetBeans. The Initial Developer of the Original
+ * Software is Sun Microsystems, Inc. Portions Copyright 1997-2008 Sun
+ * Microsystems, Inc. All Rights Reserved.
+ *
  * If you wish your version of this file to be governed by only the CDDL
  * or only the GPL Version 2, indicate your decision by adding
  * "[Contributor] elects to include this software in this distribution
@@ -31,64 +37,52 @@
  * However, if you add GPL Version 2 code and therefore, elected the GPL
  * Version 2 license, then the option applies only if the new code is
  * made subject to such option by the copyright holder.
- *
- * Contributor(s):
- *
- * Portions Copyrighted 2009 Sun Microsystems, Inc.
  */
 package org.netbeans.modules.ws.qaf;
 
-import java.io.IOException;
 import junit.framework.Test;
 import org.netbeans.junit.NbModuleSuite;
 
 /**
+ *  Basic validation suite for web services support in the IDE
  *
- * @author lukas
+ *  Duration of this test suite: aprox. 8min
+ *
+ * @author lukas.jungmann@sun.com
  */
-public class MavenEjbWsValidation extends EjbWsValidation {
+public class JEE6WsValidation extends WsValidation {
 
-    public MavenEjbWsValidation(String name) {
+    /** Creates a new instance of WsValidation */
+    public JEE6WsValidation(String name) {
         super(name);
     }
 
     @Override
-    public String getProjectName() {
-        return "Mvn" + super.getProjectName();
-    }
-
-    @Override
-    protected ProjectType getProjectType() {
-        return ProjectType.MAVEN_EJB;
+    protected JavaEEVersion getJavaEEversion() {
+        return JavaEEVersion.JAVAEE6;
     }
 
     public static Test suite() {
-        return NbModuleSuite.create(addServerTests(Server.GLASSFISH,
-                NbModuleSuite.createConfiguration(MavenEjbWsValidation.class),
+        return NbModuleSuite.create(addServerTests(Server.GLASSFISH_V3, NbModuleSuite.createConfiguration(JEE6WsValidation.class),
                 "testCreateNewWs",
                 "testAddOperation",
                 "testSetSOAP",
-// IZ# 175974                "testGenerateWSDL",
                 "testStartServer",
                 "testWsHandlers",
-                "testRunWsProject",
+                "testDeployWsProject",
                 "testTestWS",
+                "testGenerateWrapper",
+                "testGenerateWSDL",
+                "testDeployWsProject",
                 "testCreateWsClient",
-                "testRefreshClientAndReplaceWSDL",
-                "testCallWsOperationInSessionEJB",
+                "testCallWsOperationInServlet",
+                "testCallWsOperationInJSP",
                 "testCallWsOperationInJavaClass",
-                "testWsFromEJBinClientProject",
+                "testRefreshClient",
                 "testWsClientHandlers",
-                "testRunWsClientProject",
+                "testDeployWsClientProject",
                 "testUndeployProjects",
                 "testStopServer").enableModules(".*").clusters(".*"));
     }
 
-    public void testRunWsProject() throws IOException {
-        runProject(getWsProjectName());
-    }
-
-    public void testRunWsClientProject() throws IOException {
-        runProject(getWsClientProjectName());
-    }
 }
