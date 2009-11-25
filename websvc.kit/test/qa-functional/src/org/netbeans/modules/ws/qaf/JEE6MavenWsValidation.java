@@ -38,7 +38,6 @@
  */
 package org.netbeans.modules.ws.qaf;
 
-import java.io.IOException;
 import junit.framework.Test;
 import org.netbeans.junit.NbModuleSuite;
 
@@ -46,49 +45,37 @@ import org.netbeans.junit.NbModuleSuite;
  *
  * @author lukas
  */
-public class MavenEjbWsValidation extends EjbWsValidation {
+public class JEE6MavenWsValidation extends MavenWsValidation {
 
-    public MavenEjbWsValidation(String name) {
+    public JEE6MavenWsValidation(String name) {
         super(name);
     }
 
     @Override
-    public String getProjectName() {
-        return "Mvn" + super.getProjectName();
-    }
-
-    @Override
-    protected ProjectType getProjectType() {
-        return ProjectType.MAVEN_EJB;
+    protected JavaEEVersion getJavaEEversion() {
+        return JavaEEVersion.JAVAEE6;
     }
 
     public static Test suite() {
-        return NbModuleSuite.create(addServerTests(Server.GLASSFISH,
-                NbModuleSuite.createConfiguration(MavenEjbWsValidation.class),
+        return NbModuleSuite.create(addServerTests(Server.GLASSFISH_V3, NbModuleSuite.createConfiguration(JEE6MavenWsValidation.class),
                 "testCreateNewWs",
                 "testAddOperation",
                 "testSetSOAP",
-// IZ# 175974                "testGenerateWSDL",
                 "testStartServer",
                 "testWsHandlers",
                 "testRunWsProject",
                 "testTestWS",
+// IZ# 175975              "testGenerateWrapper",
+// IZ# 175974              "testGenerateWSDL",
+//                "testRunWsProject",
                 "testCreateWsClient",
-                "testRefreshClientAndReplaceWSDL",
-                "testCallWsOperationInSessionEJB",
+                "testCallWsOperationInServlet",
+                "testCallWsOperationInJSP",
                 "testCallWsOperationInJavaClass",
-                "testWsFromEJBinClientProject",
+                "testRefreshClient",
                 "testWsClientHandlers",
                 "testRunWsClientProject",
                 "testUndeployProjects",
                 "testStopServer").enableModules(".*").clusters(".*"));
-    }
-
-    public void testRunWsProject() throws IOException {
-        runProject(getWsProjectName());
-    }
-
-    public void testRunWsClientProject() throws IOException {
-        runProject(getWsClientProjectName());
     }
 }

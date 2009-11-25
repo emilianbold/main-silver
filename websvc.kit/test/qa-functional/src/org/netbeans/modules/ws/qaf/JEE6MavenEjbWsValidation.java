@@ -38,33 +38,29 @@
  */
 package org.netbeans.modules.ws.qaf;
 
-import java.io.IOException;
 import junit.framework.Test;
+import org.netbeans.jellytools.modules.j2ee.J2eeTestCase.Server;
 import org.netbeans.junit.NbModuleSuite;
+import org.netbeans.modules.ws.qaf.WebServicesTestBase.JavaEEVersion;
 
 /**
  *
  * @author lukas
  */
-public class MavenEjbWsValidation extends EjbWsValidation {
+public class JEE6MavenEjbWsValidation extends MavenEjbWsValidation {
 
-    public MavenEjbWsValidation(String name) {
+    public JEE6MavenEjbWsValidation(String name) {
         super(name);
     }
 
     @Override
-    public String getProjectName() {
-        return "Mvn" + super.getProjectName();
-    }
-
-    @Override
-    protected ProjectType getProjectType() {
-        return ProjectType.MAVEN_EJB;
+    protected JavaEEVersion getJavaEEversion() {
+        return JavaEEVersion.JAVAEE6;
     }
 
     public static Test suite() {
-        return NbModuleSuite.create(addServerTests(Server.GLASSFISH,
-                NbModuleSuite.createConfiguration(MavenEjbWsValidation.class),
+        return NbModuleSuite.create(addServerTests(Server.GLASSFISH_V3,
+                NbModuleSuite.createConfiguration(JEE6MavenEjbWsValidation.class),
                 "testCreateNewWs",
                 "testAddOperation",
                 "testSetSOAP",
@@ -82,13 +78,5 @@ public class MavenEjbWsValidation extends EjbWsValidation {
                 "testRunWsClientProject",
                 "testUndeployProjects",
                 "testStopServer").enableModules(".*").clusters(".*"));
-    }
-
-    public void testRunWsProject() throws IOException {
-        runProject(getWsProjectName());
-    }
-
-    public void testRunWsClientProject() throws IOException {
-        runProject(getWsClientProjectName());
     }
 }

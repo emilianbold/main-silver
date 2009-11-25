@@ -1,7 +1,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright 2009 Sun Microsystems, Inc. All rights reserved.
+ * Copyright 1997-2009 Sun Microsystems, Inc. All rights reserved.
  *
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common
@@ -34,44 +34,44 @@
  *
  * Contributor(s):
  *
- * Portions Copyrighted 2009 Sun Microsystems, Inc.
+ * Portions Copyrighted 2008 Sun Microsystems, Inc.
  */
 package org.netbeans.modules.ws.qaf;
 
-import java.io.IOException;
 import junit.framework.Test;
 import org.netbeans.junit.NbModuleSuite;
 
 /**
+ *  Basic validation suite for web services support in the IDE
  *
- * @author lukas
+ *  Duration of this test suite: aprox. 7min
+ *
+ * @author lukas.jungmann@sun.com
  */
-public class MavenEjbWsValidation extends EjbWsValidation {
+public class JEE6EjbWsValidation extends EjbWsValidation {
 
-    public MavenEjbWsValidation(String name) {
+    /** Default constructor.
+     * @param testName name of particular test case
+     */
+    public JEE6EjbWsValidation(String name) {
         super(name);
     }
 
     @Override
-    public String getProjectName() {
-        return "Mvn" + super.getProjectName();
-    }
-
-    @Override
-    protected ProjectType getProjectType() {
-        return ProjectType.MAVEN_EJB;
+    protected JavaEEVersion getJavaEEversion() {
+        return JavaEEVersion.JAVAEE6;
     }
 
     public static Test suite() {
-        return NbModuleSuite.create(addServerTests(Server.GLASSFISH,
-                NbModuleSuite.createConfiguration(MavenEjbWsValidation.class),
+        return NbModuleSuite.create(addServerTests(Server.GLASSFISH_V3,
+                NbModuleSuite.createConfiguration(JEE6EjbWsValidation.class),
                 "testCreateNewWs",
                 "testAddOperation",
                 "testSetSOAP",
-// IZ# 175974                "testGenerateWSDL",
+                "testGenerateWSDL",
                 "testStartServer",
                 "testWsHandlers",
-                "testRunWsProject",
+                "testDeployWsProject",
                 "testTestWS",
                 "testCreateWsClient",
                 "testRefreshClientAndReplaceWSDL",
@@ -79,16 +79,9 @@ public class MavenEjbWsValidation extends EjbWsValidation {
                 "testCallWsOperationInJavaClass",
                 "testWsFromEJBinClientProject",
                 "testWsClientHandlers",
-                "testRunWsClientProject",
+                "testDeployWsClientProject",
                 "testUndeployProjects",
                 "testStopServer").enableModules(".*").clusters(".*"));
     }
 
-    public void testRunWsProject() throws IOException {
-        runProject(getWsProjectName());
-    }
-
-    public void testRunWsClientProject() throws IOException {
-        runProject(getWsClientProjectName());
-    }
 }

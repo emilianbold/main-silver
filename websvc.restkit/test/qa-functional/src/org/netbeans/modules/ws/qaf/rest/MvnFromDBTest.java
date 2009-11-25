@@ -36,9 +36,8 @@
  *
  * Portions Copyrighted 2009 Sun Microsystems, Inc.
  */
-package org.netbeans.modules.ws.qaf;
+package org.netbeans.modules.ws.qaf.rest;
 
-import java.io.IOException;
 import junit.framework.Test;
 import org.netbeans.junit.NbModuleSuite;
 
@@ -46,49 +45,29 @@ import org.netbeans.junit.NbModuleSuite;
  *
  * @author lukas
  */
-public class MavenEjbWsValidation extends EjbWsValidation {
+public class MvnFromDBTest extends FromDBTest {
 
-    public MavenEjbWsValidation(String name) {
+    public MvnFromDBTest(String name) {
         super(name);
     }
 
     @Override
-    public String getProjectName() {
-        return "Mvn" + super.getProjectName();
+    protected ProjectType getProjectType() {
+        return ProjectType.MAVEN_WEB;
     }
 
     @Override
-    protected ProjectType getProjectType() {
-        return ProjectType.MAVEN_EJB;
+    public String getProjectName() {
+        return "MvnFromDB"; //NOI18N
     }
 
+    /**
+     * Creates suite from particular test cases. You can define order of testcases here.
+     */
     public static Test suite() {
-        return NbModuleSuite.create(addServerTests(Server.GLASSFISH,
-                NbModuleSuite.createConfiguration(MavenEjbWsValidation.class),
-                "testCreateNewWs",
-                "testAddOperation",
-                "testSetSOAP",
-// IZ# 175974                "testGenerateWSDL",
-                "testStartServer",
-                "testWsHandlers",
-                "testRunWsProject",
-                "testTestWS",
-                "testCreateWsClient",
-                "testRefreshClientAndReplaceWSDL",
-                "testCallWsOperationInSessionEJB",
-                "testCallWsOperationInJavaClass",
-                "testWsFromEJBinClientProject",
-                "testWsClientHandlers",
-                "testRunWsClientProject",
-                "testUndeployProjects",
-                "testStopServer").enableModules(".*").clusters(".*"));
-    }
-
-    public void testRunWsProject() throws IOException {
-        runProject(getWsProjectName());
-    }
-
-    public void testRunWsClientProject() throws IOException {
-        runProject(getWsClientProjectName());
+        return NbModuleSuite.create(addServerTests(Server.GLASSFISH_V3, NbModuleSuite.createConfiguration(MvnFromDBTest.class),
+                "testFromDB", //NOI18N
+                "testRun", //NOI18N
+                "testUndeploy").enableModules(".*").clusters(".*")); //NOI18N
     }
 }
