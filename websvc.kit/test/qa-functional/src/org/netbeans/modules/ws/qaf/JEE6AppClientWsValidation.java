@@ -1,7 +1,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright 2009 Sun Microsystems, Inc. All rights reserved.
+ * Copyright 1997-2009 Sun Microsystems, Inc. All rights reserved.
  *
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common
@@ -34,61 +34,35 @@
  *
  * Contributor(s):
  *
- * Portions Copyrighted 2009 Sun Microsystems, Inc.
+ * Portions Copyrighted 2008 Sun Microsystems, Inc.
  */
 package org.netbeans.modules.ws.qaf;
 
-import java.io.IOException;
 import junit.framework.Test;
 import org.netbeans.junit.NbModuleSuite;
 
 /**
  *
- * @author lukas
+ * @author jp154641
  */
-public class MavenEjbWsValidation extends EjbWsValidation {
+public class JEE6AppClientWsValidation extends AppClientWsValidation {
 
-    public MavenEjbWsValidation(String name) {
+    public JEE6AppClientWsValidation(String name) {
         super(name);
     }
 
     @Override
-    public String getProjectName() {
-        return "Mvn" + super.getProjectName();
-    }
-
-    @Override
-    protected ProjectType getProjectType() {
-        return ProjectType.MAVEN_EJB;
+    protected JavaEEVersion getJavaEEversion() {
+        return JavaEEVersion.JAVAEE6;
     }
 
     public static Test suite() {
-        return NbModuleSuite.create(addServerTests(Server.GLASSFISH,
-                NbModuleSuite.createConfiguration(MavenEjbWsValidation.class),
-                "testCreateNewWs",
-                "testAddOperation",
-                "testSetSOAP",
-// IZ# 175974                "testGenerateWSDL",
-                "testStartServer",
-                "testWsHandlers",
-                "testRunWsProject",
-                "testTestWS",
+        return NbModuleSuite.create(addServerTests(Server.GLASSFISH_V3, NbModuleSuite.createConfiguration(JEE6AppClientWsValidation.class),
                 "testCreateWsClient",
-                "testRefreshClientAndReplaceWSDL",
-                "testCallWsOperationInSessionEJB",
+                "testCallWsOperationInJavaMainClass",
                 "testCallWsOperationInJavaClass",
-                "testWsFromEJBinClientProject",
                 "testWsClientHandlers",
                 "testRunWsClientProject",
-                "testUndeployProjects",
-                "testStopServer").enableModules(".*").clusters(".*"));
-    }
-
-    public void testRunWsProject() throws IOException {
-        runProject(getWsProjectName());
-    }
-
-    public void testRunWsClientProject() throws IOException {
-        runProject(getWsClientProjectName());
+                "testUndeployClientProject").enableModules(".*").clusters(".*"));
     }
 }
