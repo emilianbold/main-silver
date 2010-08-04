@@ -25,9 +25,8 @@
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
  * Contributor(s):
- *
  * The Original Software is NetBeans. The Initial Developer of the Original
- * Software is Sun Microsystems, Inc. Portions Copyright 1997-2007 Sun
+ * Software is Sun Microsystems, Inc. Portions Copyright 1997-2006 Sun
  * Microsystems, Inc. All Rights Reserved.
  *
  * If you wish your version of this file to be governed by only the CDDL
@@ -41,31 +40,16 @@
  * Version 2 license, then the option applies only if the new code is
  * made subject to such option by the copyright holder.
  */
+package org.netbeans.modules.j2ee.weblogic9.ui.nodes.actions;
 
-package org.netbeans.modules.websvc.wsitconf.projects;
+import org.openide.nodes.Node.Cookie;
 
-import org.netbeans.api.project.Project;
-import org.netbeans.spi.project.LookupProvider;
-import org.openide.util.Lookup;
-import org.openide.util.lookup.Lookups;
 
-/** Lookup Provider for WSIT
+/**
+ * @author ads
  *
- * @author Martin Grebac
  */
-@LookupProvider.Registration(projectType="org-netbeans-modules-maven")
-public class MavenLookupProvider implements LookupProvider {
+public interface UnregisterCookie extends Cookie {
 
-    /** Creates a new instance of MavenLookupProvider */
-    public MavenLookupProvider() {
-    }
-
-    public Lookup createAdditionalLookup(Lookup baseContext) {
-        final Project project = baseContext.lookup(Project.class);
-        MavenWsitProvider wsitProvider = new MavenWsitProvider(project);
-
-        return Lookups.fixed(new Object[] {
-            wsitProvider,
-            });
-    }
+    public void unregister();
 }
