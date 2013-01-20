@@ -62,7 +62,7 @@ import org.netbeans.modules.j2ee.jboss4.config.gen.Session;
  *
  * @author lkotouc
  */
-final class JbossMsgDestRefModifier {
+final class JBossMsgDestRefModifier {
 
     /**
      * Add a reference to the given message destination to the enterprise beans of the given type if it does not exist yet.
