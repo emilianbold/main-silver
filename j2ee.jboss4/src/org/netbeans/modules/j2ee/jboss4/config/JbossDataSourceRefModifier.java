@@ -62,7 +62,7 @@ import org.netbeans.modules.j2ee.jboss4.config.gen.Session;
  *
  * @author lkotouc
  */
-final class JbossDataSourceRefModifier {
+final class JBossDataSourceRefModifier {
 
     /**
      * Add a reference to the given resource to the enterprise beans of the given type if it does not exist yet.
