@@ -1,33 +1,33 @@
-|Team|              M(mnemonics)
-============
-ShowChanges         W
-Diff    >           D
-Add                 A
-Commit...           M
-Update...           U
-RevertModifications R
-ShowAnnotations     N
-SearchHistory       H
-Conflicts   >       F
+|Team|                  M (mnemonics)
+========
+Show Changes            W
+Diff            >       D
+Add                     A
+Commit...               M
+Update...               U
+Revert Modifications    R
+Show Annotations        N
+Search History          H
+Conflicts       >       F
 ===================
-Ignore  >           I
-Patches >           P
+Ignore          >       I
+Patches         >       P
 ===================
-Branch/Tag  >       B
-Queues  >           Q
-Remote  >           E
-Recover >           V
+Branch/Tag      >       B
+Queues          >       Q
+Remote          >       E
+Recover         >       V
 ===================
-View...             V
-Properties...       O
+View...                 V
+Properties...           O
 ===================
-ShelveChanges   >   S
-Disconnect...       O
+Shelve Changes  >       S
+Disconnect...           O
 ===================
-OtherVCS    >       V
+Other VCS       >       V
 ===================
-History     >       T
-FindTasks...        F
-ReportTask...
-CreateBuildJob...   J
+History         >       T
+Find Tasks...           F
+Report Task...
+Create Build Job...     J
 
