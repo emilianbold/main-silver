@@ -37,74 +37,55 @@
  *
  * Contributor(s):
  *
- * Portions Copyrighted 2009 Sun Microsystems, Inc.
+ * Portions Copyrighted 2008 Sun Microsystems, Inc.
  */
+package org.netbeans.test.git.utils;
 
-package org.netbeans.modules.team.server.ui.common;
-
-import java.awt.Color;
-import javax.swing.UIManager;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
 /**
  *
- * @author S. Aubrecht
+ * @author pvcs
  */
-public class ColorManager {
-    
-    private static ColorManager theInstance;
+public final class MessageHandler extends Handler {
 
-    private static final boolean isAqua = "Aqua".equals(UIManager.getLookAndFeel().getID()); // NOI18N
+    String message;
+    boolean started = false;
+    boolean finished = false;
 
-    private Color defaultBackground = UIManager.getColor("Tree.textBackground") == null  //NOI18N
-            ? UIManager.getColor("white")  //NOI18N
-            : UIManager.getColor("Tree.textBackground"); //NOI18N
-    private Color defaultForeground = UIManager.getColor("black"); //NOI18N
-    private Color disabledColor = Color.gray;
-    private Color linkColor = new Color(0x164B7B); // to match org.netbeans.modules.bugtracking.util.LinkButton
-    private Color errorColor = new Color(153,0,0);
-    private Color stableBuildColor = new Color(0,153,0);
-    private Color unstableBuildColor = Color.yellow.darker().darker();
-
-    private ColorManager() {
+    public MessageHandler(String message) {
+        this.message = message;
     }
 
-    public static ColorManager getDefault() {
-        if( null == theInstance )
-            theInstance = new ColorManager();
-        return theInstance;
+    @Override
+    public void publish(LogRecord record) {
+//        throw new UnsupportedOperationException("Not supported yet.");
+        if (started == false) {
+            if (record.getMessage().indexOf("Start - " + message) > -1) {
+                started = true;
+                finished = false;
+            }
+        }
+        if (started) {
+            if (record.getMessage().indexOf("End - " + message) > -1) {
+                started = false;
+                finished = true;
+            }
+        }
     }
 
-    public Color getDefaultBackground() {
-        if( isAqua )
-            return UIManager.getColor("NbExplorerView.background"); // NOI18N
-        return defaultBackground;
+    @Override
+    public void flush() {
+//        throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Color getDefaultForeground() {
-        return defaultForeground;
+    @Override
+    public void close() throws SecurityException {
+//        throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Color getDisabledColor() {
-        return disabledColor;
-    }
-
-    public Color getErrorColor() {
-        return errorColor;
-    }
-
-    public Color getLinkColor() {
-        return linkColor;
-    }
-
-    public Color getStableBuildColor() {
-        return stableBuildColor;
-    }
-
-    public static ColorManager getTheInstance() {
-        return theInstance;
-    }
-
-    public Color getUnstableBuildColor() {
-        return unstableBuildColor;
+    public boolean isFinished() {
+        return finished;
     }
 }
