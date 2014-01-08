@@ -39,21 +39,82 @@
  *
  * Portions Copyrighted 2013 Sun Microsystems, Inc.
  */
-package org.netbeans.modules.javaee.wildfly.nodes;
-
-import java.util.concurrent.ExecutorService;
-import org.openide.nodes.Children;
-import org.openide.util.RequestProcessor;
+package org.netbeans.modules.javaee.wildfly.ide.commands;
 
 /**
  *
- * @author Petr Hejl
+ * @author Emmanuel Hugonnet (ehsavoie) <emmanuel.hugonnet@gmail.com>
  */
-public abstract class JBAsyncChildren extends Children.Keys {
+public class WildflyModule {
 
-    private static final ExecutorService EXECUTOR = new RequestProcessor(JBAsyncChildren.class);
+    private final String archiveName;
+    private String url;
+    private boolean running;
 
-    public final ExecutorService getExecutorService() {
-        return EXECUTOR;
+    public WildflyModule(String archiveName) {
+        this.archiveName = archiveName;
     }
+
+    public WildflyModule(String archiveName, boolean running) {
+        this.archiveName = archiveName;
+        this.running = running;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final WildflyModule other = (WildflyModule) obj;
+        if ((this.archiveName == null) ? (other.archiveName != null) : !this.archiveName.equals(other.archiveName)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Get the value of url
+     *
+     * @return the value of url
+     */
+    public String getUrl() {
+        return url;
+    }
+
+    /**
+     * Set the value of url
+     *
+     * @param url new value of url
+     */
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    /**
+     * Get the value of running
+     *
+     * @return the value of running
+     */
+    public boolean isRunning() {
+        return running;
+    }
+
+    /**
+     * Get the value of archiveName
+     *
+     * @return the value of archiveName
+     */
+    public String getArchiveName() {
+        return archiveName;
+    }
+
 }

@@ -1,7 +1,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright 2014 Oracle and/or its affiliates. All rights reserved.
+ * Copyright 2013 Oracle and/or its affiliates. All rights reserved.
  *
  * Oracle and Java are registered trademarks of Oracle and/or its affiliates.
  * Other names may be trademarks of their respective owners.
@@ -37,69 +37,78 @@
  *
  * Contributor(s):
  *
- * Portions Copyrighted 2014 Sun Microsystems, Inc.
+ * Portions Copyrighted 2013 Sun Microsystems, Inc.
  */
 package org.netbeans.modules.javaee.wildfly.nodes;
 
 import java.awt.Image;
 import javax.swing.Action;
-import static org.netbeans.modules.javaee.wildfly.nodes.Util.EJB_ENTITY_ICON;
-import static org.netbeans.modules.javaee.wildfly.nodes.Util.EJB_MESSAGE_ICON;
-import static org.netbeans.modules.javaee.wildfly.nodes.Util.EJB_SESSION_ICON;
+import org.netbeans.api.db.explorer.node.BaseNode;
+import org.netbeans.modules.j2ee.deployment.common.api.Datasource;
+import org.netbeans.modules.javaee.wildfly.nodes.actions.UndeployModuleAction;
+import org.netbeans.modules.javaee.wildfly.nodes.actions.UndeployModuleCookieImpl;
+import org.openide.actions.PropertiesAction;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
+import org.openide.nodes.PropertySupport;
+import org.openide.nodes.Sheet;
 import org.openide.util.ImageUtilities;
+import org.openide.util.Lookup;
+import org.openide.util.NbBundle;
 import org.openide.util.actions.SystemAction;
 
 /**
  *
- * @author Emmanuel Hugonnet (ehsavoie) <emmanuel.hugonnet@gmail.com>
+ * @author ehugonnet
  */
-public class WildflyEjbComponentNode extends AbstractNode {
-    
-   public enum Type { 
-        MDB("message-driven-bean", EJB_MESSAGE_ICON), 
-        SINGLETON("singleton-bean", EJB_SESSION_ICON), 
-        STATELESS( "stateless-session-bean", EJB_SESSION_ICON), 
-        ENTITY("entity-bean", EJB_ENTITY_ICON), 
-        STATEFULL("stateful-session-bean", EJB_SESSION_ICON);
-        
-        private final String propertyName;
-        private final String icon;
-        Type(final String propertyName, final String icon) {
-            this.propertyName = propertyName;
-            this.icon = icon;
-        }
-        
-        public String getPropertyName() {
-            return this.propertyName;
-        }
-        
-        public String getIcon() {
-            return this.icon;
-        }
-    };
-   
-   private final Type ejbType;
-    public WildflyEjbComponentNode(String ejbName, Type ejbType) {
+public class WildflyDatasourceNode extends AbstractNode {
+
+    public WildflyDatasourceNode(String name, Datasource ds, Lookup lookup) {
         super(Children.LEAF);
-        this.ejbType = ejbType;
-        setDisplayName(ejbName);
+        getCookieSet().add(new UndeployModuleCookieImpl(ds.getDisplayName(), lookup));
+        setDisplayName(ds.getJndiName());
+        setName(name);
+        setShortDescription(ds.getDisplayName());
+        initProperties(ds);
+    }
+
+    protected void initProperties(Datasource ds) {
+        addProperty("Driver", ds.getDriverClassName());
+        addProperty("JndiName", ds.getJndiName());
+        addProperty("Url", ds.getUrl());
+        addProperty("Username", ds.getUsername());
+        addProperty("Password", ds.getPassword());
+    }
+
+    private void addProperty(String name, String value) {
+        String displayName = NbBundle.getMessage(WildflyDatasourceNode.class, "LBL_Resources_Datasources_Datasource_" + name);
+        String description = NbBundle.getMessage(WildflyDatasourceNode.class, "DESC_Resources_Datasources_Datasource_" + name);
+        PropertySupport ps = new SimplePropertySupport(name, value, displayName, description);
+        getSheet().get(Sheet.PROPERTIES).put(ps);
+    }
+    
+    @Override
+    protected Sheet createSheet() {
+        Sheet sheet = Sheet.createDefault();
+        setSheet(sheet);
+        return sheet;
     }
 
     @Override
     public Action[] getActions(boolean context) {
-        return new SystemAction[]{};
-
+        return new SystemAction[]{
+            SystemAction.get(PropertiesAction.class),
+            SystemAction.get(UndeployModuleAction.class)
+        };
     }
 
     @Override
     public Image getIcon(int type) {
-        return ImageUtilities.loadImage(ejbType.getIcon());
+        return ImageUtilities.loadImage(Util.JDBC_RESOURCE_ICON);
     }
 
     @Override
     public Image getOpenedIcon(int type) {
-        return getIcon(type);
+        return ImageUtilities.loadImage(Util.JDBC_RESOURCE_ICON);
     }
 }
