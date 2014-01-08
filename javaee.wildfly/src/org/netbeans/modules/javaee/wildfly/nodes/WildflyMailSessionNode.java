@@ -43,63 +43,73 @@ package org.netbeans.modules.javaee.wildfly.nodes;
 
 import java.awt.Image;
 import javax.swing.Action;
-import static org.netbeans.modules.javaee.wildfly.nodes.Util.EJB_ENTITY_ICON;
-import static org.netbeans.modules.javaee.wildfly.nodes.Util.EJB_MESSAGE_ICON;
-import static org.netbeans.modules.javaee.wildfly.nodes.Util.EJB_SESSION_ICON;
+import org.netbeans.modules.j2ee.deployment.common.api.Datasource;
+import org.netbeans.modules.javaee.wildfly.config.WildflyMailSessionResource;
+import org.netbeans.modules.javaee.wildfly.nodes.actions.UndeployModuleAction;
+import org.netbeans.modules.javaee.wildfly.nodes.actions.UndeployModuleCookieImpl;
+import org.openide.actions.PropertiesAction;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
+import org.openide.nodes.PropertySupport;
+import org.openide.nodes.Sheet;
 import org.openide.util.ImageUtilities;
+import org.openide.util.Lookup;
+import org.openide.util.NbBundle;
 import org.openide.util.actions.SystemAction;
 
 /**
  *
  * @author Emmanuel Hugonnet (ehsavoie) <emmanuel.hugonnet@gmail.com>
  */
-public class WildflyEjbComponentNode extends AbstractNode {
-    
-   public enum Type { 
-        MDB("message-driven-bean", EJB_MESSAGE_ICON), 
-        SINGLETON("singleton-bean", EJB_SESSION_ICON), 
-        STATELESS( "stateless-session-bean", EJB_SESSION_ICON), 
-        ENTITY("entity-bean", EJB_ENTITY_ICON), 
-        STATEFULL("stateful-session-bean", EJB_SESSION_ICON);
-        
-        private final String propertyName;
-        private final String icon;
-        Type(final String propertyName, final String icon) {
-            this.propertyName = propertyName;
-            this.icon = icon;
-        }
-        
-        public String getPropertyName() {
-            return this.propertyName;
-        }
-        
-        public String getIcon() {
-            return this.icon;
-        }
-    };
-   
-   private final Type ejbType;
-    public WildflyEjbComponentNode(String ejbName, Type ejbType) {
+class WildflyMailSessionNode extends AbstractNode {
+
+    public WildflyMailSessionNode(String name, WildflyMailSessionResource mailSession, Lookup lookup) {
         super(Children.LEAF);
-        this.ejbType = ejbType;
-        setDisplayName(ejbName);
+        setDisplayName(mailSession.getName());
+        setName(name);
+        setShortDescription(mailSession.getJndiName());
+        initProperties(mailSession);
+    }
+
+    protected final void initProperties(WildflyMailSessionResource mailSession) {
+        if (mailSession.getJndiName() != null) {
+            addProperty("JndiName", mailSession.getJndiName());
+        }
+        if (mailSession.getHostName() != null) {
+            addProperty("Server", mailSession.getHostName());
+        }
+        if (mailSession.getIsDebug() != null) {
+            addProperty("Debug", mailSession.getIsDebug());
+        }
+    }
+
+    private void addProperty(String name, String value) {
+        String displayName = NbBundle.getMessage(WildflyDatasourceNode.class, "LBL_Resources_MailSessions_Session_" + name);
+        String description = NbBundle.getMessage(WildflyDatasourceNode.class, "DESC_Resources_MailSessions_Session_" + name);
+        PropertySupport ps = new SimplePropertySupport(name, value, displayName, description);
+        getSheet().get(Sheet.PROPERTIES).put(ps);
+    }
+
+    @Override
+    protected Sheet createSheet() {
+        Sheet sheet = Sheet.createDefault();
+        setSheet(sheet);
+        return sheet;
     }
 
     @Override
     public Action[] getActions(boolean context) {
-        return new SystemAction[]{};
-
+        return new SystemAction[]{SystemAction.get(PropertiesAction.class)};
     }
 
     @Override
     public Image getIcon(int type) {
-        return ImageUtilities.loadImage(ejbType.getIcon());
+        return ImageUtilities.loadImage(Util.JAVAMAIL_ICON);
     }
 
     @Override
     public Image getOpenedIcon(int type) {
-        return getIcon(type);
+        return ImageUtilities.loadImage(Util.JAVAMAIL_ICON);
     }
+
 }
