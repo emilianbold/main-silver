@@ -43,27 +43,75 @@
  */
 package org.netbeans.modules.javaee.wildfly.nodes;
 
-import javax.swing.Action;
-import org.openide.nodes.AbstractNode;
-import org.openide.nodes.Children;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.netbeans.modules.javaee.wildfly.WildFlyDeploymentManager;
+import org.netbeans.modules.javaee.wildfly.nodes.actions.Refreshable;
 import org.openide.nodes.Node;
 import org.openide.util.Lookup;
-import org.openide.util.NbBundle;
 
 /**
+ * It describes children nodes of the EJB Modules node. Implements Refreshable
+ * interface and due to it can be refreshed via ResreshModulesAction.
  *
- * @author Kirill Sorokin <Kirill.Sorokin@Sun.COM>
+ * @author Michal Mocnak
  */
-public class JBTargetNode extends AbstractNode {
+public class WildflyDestinationsChildren extends WildflyAsyncChildren implements Refreshable {
 
-    public JBTargetNode(Lookup lookup) {
-        super(new Children.Array());
-        getChildren().add(new Node[] {new JBItemNode(new JBApplicationsChildren(lookup), NbBundle.getMessage(JBTargetNode.class, "LBL_Apps")), 
-            new JBItemNode(new JBResourcesChildren(lookup), NbBundle.getMessage(JBTargetNode.class, "LBL_Resources"))});
+    private static final Logger LOGGER = Logger.getLogger(WildflyDestinationsChildren.class.getName());
+
+    private final Lookup lookup;
+
+    public WildflyDestinationsChildren(Lookup lookup) {
+        this.lookup = lookup;
     }
-    
+
     @Override
-    public Action[] getActions(boolean b) {
-        return new Action[] {};
+    public void updateKeys() {
+        setKeys(new Object[]{Util.WAIT_NODE});
+        getExecutorService().submit(new WildflyDestinationsNodeUpdater(), 0);
+
     }
+
+    class WildflyDestinationsNodeUpdater implements Runnable {
+
+        List<WildflyDestinationNode> keys = new ArrayList<WildflyDestinationNode>();
+
+        @Override
+        public void run() {
+            try {
+                WildFlyDeploymentManager dm = lookup.lookup(WildFlyDeploymentManager.class);
+                keys.addAll(dm.getClient().listDestinations(lookup));
+            } catch (Exception ex) {
+                LOGGER.log(Level.INFO, null, ex);
+            }
+
+            setKeys(keys);
+        }
+    }
+
+    @Override
+    protected void addNotify() {
+        updateKeys();
+    }
+
+    @Override
+    protected void removeNotify() {
+        setKeys(java.util.Collections.EMPTY_SET);
+    }
+
+    @Override
+    protected org.openide.nodes.Node[] createNodes(Object key) {
+        if (key instanceof WildflyDestinationNode) {
+            return new Node[]{(WildflyDestinationNode) key};
+        }
+
+        if (key instanceof String && key.equals(Util.WAIT_NODE)) {
+            return new Node[]{Util.createWaitNode()};
+        }
+        return null;
+    }
+
 }

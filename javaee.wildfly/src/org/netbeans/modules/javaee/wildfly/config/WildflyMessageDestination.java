@@ -27,7 +27,7 @@
  * Contributor(s):
  *
  * The Original Software is NetBeans. The Initial Developer of the Original
- * Software is Sun Microsystems, Inc. Portions Copyright 1997-2006 Sun
+ * Software is Sun Microsystems, Inc. Portions Copyright 1997-2007 Sun
  * Microsystems, Inc. All Rights Reserved.
  *
  * If you wish your version of this file to be governed by only the CDDL
@@ -41,75 +41,46 @@
  * Version 2 license, then the option applies only if the new code is
  * made subject to such option by the copyright holder.
  */
-package org.netbeans.modules.javaee.wildfly.nodes;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.netbeans.modules.javaee.wildfly.WildFlyDeploymentManager;
-import org.netbeans.modules.javaee.wildfly.nodes.actions.Refreshable;
-import org.openide.nodes.Node;
-import org.openide.util.Lookup;
+package org.netbeans.modules.javaee.wildfly.config;
+
+import java.util.HashSet;
+import java.util.Set;
+import org.netbeans.modules.j2ee.deployment.common.api.MessageDestination;
 
 /**
- * It describes children nodes of the EJB Modules node. Implements Refreshable
- * interface and due to it can be refreshed via ResreshModulesAction.
- *
- * @author Michal Mocnak
+ * @author Emmanuel Hugonnet (ehsavoie) <emmanuel.hugonnet@gmail.com>
+ * @author Libor Kotouc
  */
-public class JBEjbModulesChildren extends JBAsyncChildren implements Refreshable {
+public class WildflyMessageDestination implements MessageDestination {
 
-    private static final Logger LOGGER = Logger.getLogger(JBEjbModulesChildren.class.getName());
-
-    private final Lookup lookup;
-
-    public JBEjbModulesChildren(Lookup lookup) {
-        this.lookup = lookup;
+    public static final String QUEUE_PREFIX = "queue/";
+    public static final String TOPIC_PREFIX = "topic/";
+    private final String name;
+    private final Set<String> jndiNames = new HashSet<String>(1);
+    private final Type type;
+    
+    public WildflyMessageDestination(String name, Type type) {
+        this.name = name;
+        this.type = type;
     }
 
     @Override
-    public void updateKeys() {
-        setKeys(new Object[]{Util.WAIT_NODE});
-        getExecutorService().submit(new JBoss7EjbApplicationNodeUpdater(), 0);
-
-    }
-
-    class JBoss7EjbApplicationNodeUpdater implements Runnable {
-        List keys = new ArrayList();
-        @Override
-        public void run() {
-            try {
-                WildFlyDeploymentManager dm = lookup.lookup(WildFlyDeploymentManager.class);
-                keys.addAll(dm.getClient().listEJBModules(lookup));
-            } catch (Exception ex) {
-                LOGGER.log(Level.INFO, null, ex);
-            }
-            setKeys(keys);
-        }
+    public String getName() {
+        return name;
     }
 
     @Override
-    protected void addNotify() {
-        updateKeys();
+    public Type getType() {
+        return type;
     }
-
-    @Override
-    protected void removeNotify() {
-        setKeys(java.util.Collections.EMPTY_SET);
+    
+    public void addEntry(String jndiName) {
+        jndiNames.add(jndiName);
     }
-
-    @Override
-    protected org.openide.nodes.Node[] createNodes(Object key) {
-        if (key instanceof WildflyEjbModuleNode) {
-            return new Node[]{(WildflyEjbModuleNode) key};
-        }
-
-        if (key instanceof String && key.equals(Util.WAIT_NODE)) {
-            return new Node[]{Util.createWaitNode()};
-        }
-
-        return null;
+    
+    public Set<String> getJndiNames() {
+        return jndiNames;
     }
-
+    
 }

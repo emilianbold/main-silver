@@ -41,82 +41,73 @@
  */
 package org.netbeans.modules.javaee.wildfly.nodes;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.netbeans.modules.javaee.wildfly.WildFlyDeploymentManager;
-import org.netbeans.modules.javaee.wildfly.nodes.actions.Refreshable;
-import org.openide.nodes.Node;
+import java.awt.Image;
+import javax.swing.Action;
+import org.netbeans.modules.javaee.wildfly.config.WildflyMailSessionResource;
+import org.openide.actions.PropertiesAction;
+import org.openide.nodes.AbstractNode;
+import org.openide.nodes.Children;
+import org.openide.nodes.PropertySupport;
+import org.openide.nodes.Sheet;
+import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
+import org.openide.util.NbBundle;
+import org.openide.util.actions.SystemAction;
 
 /**
  *
  * @author Emmanuel Hugonnet (ehsavoie) <emmanuel.hugonnet@gmail.com>
  */
-public class WildflyEjbComponentsChildren extends WildflyAsyncChildren implements Refreshable {
+class WildflyMailSessionNode extends AbstractNode {
 
-    private static final Logger LOGGER = Logger.getLogger(WildflyEjbModulesChildren.class.getName());
-
-    private final Lookup lookup;
-    private final String deployment;
-    private final List<WildflyEjbComponentNode> ejbsComponents;
-
-    public WildflyEjbComponentsChildren(Lookup lookup, String deployment, List<WildflyEjbComponentNode> ejbs) {
-        this.lookup = lookup;
-        this.deployment = deployment;
-        this.ejbsComponents = new ArrayList<WildflyEjbComponentNode>(ejbs.size());
-        this.ejbsComponents.addAll(ejbs);
+    public WildflyMailSessionNode(String name, WildflyMailSessionResource mailSession, Lookup lookup) {
+        super(Children.LEAF);
+        setDisplayName(mailSession.getJndiName());
+        setName(name);
+        setShortDescription(mailSession.getJndiName());
+        initProperties(mailSession);
     }
 
-    @Override
-    public void updateKeys() {
-        setKeys(new Object[]{Util.WAIT_NODE});
-        getExecutorService().submit(new WildflyDestinationsNodeUpdater(), 0);
-
-    }
-
-    class WildflyDestinationsNodeUpdater implements Runnable {
-
-        List keys = new ArrayList();
-
-        @Override
-        public void run() {
-            try {
-                WildFlyDeploymentManager dm = lookup.lookup(WildFlyDeploymentManager.class);
-                keys.addAll(dm.getClient().listDestinationForDeployment(lookup, deployment));
-                keys.addAll(ejbsComponents);
-            } catch (Exception ex) {
-                LOGGER.log(Level.INFO, null, ex);
-            }
-
-            setKeys(keys);
+    protected final void initProperties(WildflyMailSessionResource mailSession) {
+        if (mailSession.getJndiName() != null) {
+            addProperty("JndiName", mailSession.getJndiName());
+        }
+        if (mailSession.getHostName() != null) {
+            addProperty("Server", mailSession.getHostName());
+        }
+        addProperty("Port", mailSession.getPort());
+        if (mailSession.getIsDebug() != null) {
+            addProperty("Debug", mailSession.getIsDebug());
         }
     }
 
-    @Override
-    protected void addNotify() {
-        updateKeys();
+    private void addProperty(String name, String value) {
+        String displayName = NbBundle.getMessage(WildflyDatasourceNode.class, "LBL_Resources_MailSessions_Session_" + name);
+        String description = NbBundle.getMessage(WildflyDatasourceNode.class, "DESC_Resources_MailSessions_Session_" + name);
+        PropertySupport ps = new SimplePropertySupport(name, value, displayName, description);
+        getSheet().get(Sheet.PROPERTIES).put(ps);
     }
 
     @Override
-    protected void removeNotify() {
-        setKeys(java.util.Collections.EMPTY_SET);
+    protected Sheet createSheet() {
+        Sheet sheet = Sheet.createDefault();
+        setSheet(sheet);
+        return sheet;
     }
 
     @Override
-    protected org.openide.nodes.Node[] createNodes(Object key) {
-        if (key instanceof WildflyDestinationNode) {
-            return new Node[]{(WildflyDestinationNode) key};
-        }
-        if (key instanceof WildflyEjbComponentNode) {
-            return new Node[]{(WildflyEjbComponentNode) key};
-        }
+    public Action[] getActions(boolean context) {
+        return new SystemAction[]{SystemAction.get(PropertiesAction.class)};
+    }
 
-        if (key instanceof String && key.equals(Util.WAIT_NODE)) {
-            return new Node[]{Util.createWaitNode()};
-        }
-        return null;
+    @Override
+    public Image getIcon(int type) {
+        return ImageUtilities.loadImage(Util.JAVAMAIL_ICON);
+    }
+
+    @Override
+    public Image getOpenedIcon(int type) {
+        return ImageUtilities.loadImage(Util.JAVAMAIL_ICON);
     }
 
 }

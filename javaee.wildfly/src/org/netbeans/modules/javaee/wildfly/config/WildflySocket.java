@@ -1,7 +1,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright 1997-2010 Oracle and/or its affiliates. All rights reserved.
+ * Copyright 2014 Oracle and/or its affiliates. All rights reserved.
  *
  * Oracle and Java are registered trademarks of Oracle and/or its affiliates.
  * Other names may be trademarks of their respective owners.
@@ -24,12 +24,6 @@
  * your own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
  *
- * Contributor(s):
- *
- * The Original Software is NetBeans. The Initial Developer of the Original
- * Software is Sun Microsystems, Inc. Portions Copyright 1997-2007 Sun
- * Microsystems, Inc. All Rights Reserved.
- *
  * If you wish your version of this file to be governed by only the CDDL
  * or only the GPL Version 2, indicate your decision by adding
  * "[Contributor] elects to include this software in this distribution
@@ -40,47 +34,67 @@
  * However, if you add GPL Version 2 code and therefore, elected the GPL
  * Version 2 license, then the option applies only if the new code is
  * made subject to such option by the copyright holder.
+ *
+ * Contributor(s):
+ *
+ * Portions Copyrighted 2014 Sun Microsystems, Inc.
  */
 
 package org.netbeans.modules.javaee.wildfly.config;
 
-import java.util.HashSet;
-import java.util.Set;
-import org.netbeans.modules.j2ee.deployment.common.api.MessageDestination;
-
 /**
+ *
  * @author Emmanuel Hugonnet (ehsavoie) <emmanuel.hugonnet@gmail.com>
- * @author Libor Kotouc
  */
-public class JBossMessageDestination implements MessageDestination {
+public class WildflySocket {
+    private boolean fixedSourcePort = false;
+    private String host;
+    private int port;
+    private int sourcePort;
+    private String sourceInterface;
 
-    public static final String QUEUE_PREFIX = "queue/";
-    public static final String TOPIC_PREFIX = "topic/";
-    private final String name;
-    private final Set<String> jndiNames = new HashSet<String>(1);
-    private final Type type;
-    
-    public JBossMessageDestination(String name, Type type) {
-        this.name = name;
-        this.type = type;
+    public WildflySocket() {
     }
 
-    @Override
-    public String getName() {
-        return name;
+    public boolean isFixedSourcePort() {
+        return fixedSourcePort;
     }
 
-    @Override
-    public Type getType() {
-        return type;
+    public void setFixedSourcePort(boolean fixedSourcePort) {
+        this.fixedSourcePort = fixedSourcePort;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public int getSourcePort() {
+        return sourcePort;
+    }
+
+    public void setSourcePort(int sourcePort) {
+        this.sourcePort = sourcePort;
+    }
+
+    public String getSourceInterface() {
+        return sourceInterface;
+    }
+
+    public void setSourceInterface(String sourceInterface) {
+        this.sourceInterface = sourceInterface;
     }
     
-    public void addEntry(String jndiName) {
-        jndiNames.add(jndiName);
-    }
-    
-    public Set<String> getJndiNames() {
-        return jndiNames;
-    }
     
 }

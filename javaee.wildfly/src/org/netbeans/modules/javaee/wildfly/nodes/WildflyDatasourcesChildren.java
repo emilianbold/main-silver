@@ -41,7 +41,6 @@
  * Version 2 license, then the option applies only if the new code is
  * made subject to such option by the copyright holder.
  */
-
 package org.netbeans.modules.javaee.wildfly.nodes;
 
 import java.util.ArrayList;
@@ -54,36 +53,37 @@ import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 
 /**
- * It describes children nodes of the EJB Modules node. Implements
- * Refreshable interface and due to it can be refreshed via ResreshModulesAction.
+ * It describes children nodes of the EJB Modules node. Implements Refreshable
+ * interface and due to it can be refreshed via ResreshModulesAction.
  *
  * @author Michal Mocnak
  */
-public class JBEarApplicationsChildren extends JBAsyncChildren implements Refreshable {
+public class WildflyDatasourcesChildren extends WildflyAsyncChildren implements Refreshable {
 
-    private static final Logger LOGGER = Logger.getLogger(JBEarApplicationsChildren.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(WildflyDatasourcesChildren.class.getName());
 
     private final Lookup lookup;
 
-    JBEarApplicationsChildren(Lookup lookup) {
+    public WildflyDatasourcesChildren(Lookup lookup) {
         this.lookup = lookup;
     }
 
     @Override
     public void updateKeys() {
         setKeys(new Object[]{Util.WAIT_NODE});
-        getExecutorService().submit(new WildflyEarApplicationNodeUpdater(), 0);
+        getExecutorService().submit(new WildflyDatasourcesNodeUpdater(), 0);
+
     }
 
-    class WildflyEarApplicationNodeUpdater implements Runnable {
+    class WildflyDatasourcesNodeUpdater implements Runnable {
 
-        List keys = new ArrayList();
+        List<WildflyDatasourceNode> keys = new ArrayList<WildflyDatasourceNode>();
 
         @Override
         public void run() {
             try {
                 WildFlyDeploymentManager dm = lookup.lookup(WildFlyDeploymentManager.class);
-                keys.addAll(dm.getClient().listEarApplications(lookup));
+                keys.addAll(dm.getClient().listDatasources(lookup));
             } catch (Exception ex) {
                 LOGGER.log(Level.INFO, null, ex);
             }
@@ -104,14 +104,13 @@ public class JBEarApplicationsChildren extends JBAsyncChildren implements Refres
 
     @Override
     protected org.openide.nodes.Node[] createNodes(Object key) {
-        if (key instanceof JBEarApplicationNode){
-            return new Node[]{(JBEarApplicationNode)key};
+        if (key instanceof WildflyDatasourceNode) {
+            return new Node[]{(WildflyDatasourceNode) key};
         }
 
-        if (key instanceof String && key.equals(Util.WAIT_NODE)){
+        if (key instanceof String && key.equals(Util.WAIT_NODE)) {
             return new Node[]{Util.createWaitNode()};
         }
-
         return null;
     }
 

@@ -41,61 +41,32 @@
  * Version 2 license, then the option applies only if the new code is
  * made subject to such option by the copyright holder.
  */
-
 package org.netbeans.modules.javaee.wildfly.nodes;
 
-import javax.enterprise.deploy.shared.ModuleType;
-import org.openide.nodes.AbstractNode;
+import org.netbeans.modules.j2ee.deployment.plugins.spi.RegistryNodeFactory;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.util.Lookup;
-import org.openide.util.NbBundle;
 
 /**
- * It describes children nodes of the Applications node
  *
- * @author Michal Mocnak
+ * @author Kirill Sorokin <Kirill.Sorokin@Sun.COM>
  */
-public class JBApplicationsChildren extends Children.Keys {
-    
-    JBApplicationsChildren(Lookup lookup) {
-        setKeys(new Object[] {createEarApplicationsNode(lookup),
-                                createEjbModulesNode(lookup),
-                                createWebApplicationsNode(lookup)});
+public class WildflyRegistryNodeFactory implements RegistryNodeFactory {
+
+//    public JBRegistryNodeFactory() {
+//    }
+
+    public Node getTargetNode(Lookup lookup) {
+        return new WildflyTargetNode(lookup);
+    }
+
+    public Node getManagerNode(Lookup lookup) {
+        return new WildflyManagerNode(new Children.Map(), lookup);
     }
     
-    protected void addNotify() {
-    }
+//    public String getDisplayName() {
+//        return "Registry Node Factory"; 
+//    }
     
-    protected void removeNotify() {
-    }
-    
-    protected org.openide.nodes.Node[] createNodes(Object key) {
-        if (key instanceof AbstractNode){
-            return new Node[]{(AbstractNode)key};
-        }
-        
-        return null;
-    }
-    
-    /*
-     * Creates an EAR Applications parent node
-     */
-    public static JBItemNode createEarApplicationsNode(Lookup lookup) {
-        return new  JBItemNode(new JBEarApplicationsChildren(lookup), NbBundle.getMessage(JBTargetNode.class, "LBL_EarApps"), ModuleType.EAR);
-    }
-    
-    /*
-     * Creates an Web Applications parent node
-     */
-    public static JBItemNode createWebApplicationsNode(Lookup lookup) {
-        return new JBItemNode(new JBWebApplicationsChildren(lookup), NbBundle.getMessage(JBTargetNode.class, "LBL_WebApps"), ModuleType.WAR);
-    }
-    
-    /*
-     * Creates an EJB Modules parent node
-     */
-    public static JBItemNode createEjbModulesNode(Lookup lookup) {
-        return new JBItemNode(new JBEjbModulesChildren(lookup), NbBundle.getMessage(JBTargetNode.class, "LBL_EjbModules"), ModuleType.EJB);
-    }
 }
