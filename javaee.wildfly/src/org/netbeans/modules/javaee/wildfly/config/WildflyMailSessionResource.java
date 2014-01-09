@@ -51,21 +51,17 @@ public class WildflyMailSessionResource {
 
     private final String name;
     private String jndiName;
-    private String storeProt;
-    private String storeProtClass;
-    private String transProt;
-    private String transProtClass;
-    private String hostName;
     private String userName;
     private String fromAddr;
     private String isDebug;
-    private String isEnabled;
+    private WildflySocket socket;
 
     /**
      * Creates a new instance of MailSessionResource
      */
     public WildflyMailSessionResource(String name) {
         this.name = name;
+        this.socket = new WildflySocket();
     }
 
     public String getName() {
@@ -80,46 +76,10 @@ public class WildflyMailSessionResource {
         this.jndiName = value;
     }
 
-    public String getStoreProt() {
-        return storeProt;
-    }
-
-    public void setStoreProt(String value) {
-        this.storeProt = value;
-    }
-
-    public String getStoreProtClass() {
-        return storeProtClass;
-    }
-
-    public void setStoreProtClass(String value) {
-        this.storeProtClass = value;
-    }
-
-    public String getTransProt() {
-        return transProt;
-    }
-
-    public void setTransProt(String value) {
-        this.transProt = value;
-    }
-
-    public String getTransProtClass() {
-        return transProtClass;
-    }
-
-    public void setTransProtClass(String value) {
-        this.transProtClass = value;
-    }
-
     public String getHostName() {
-        return hostName;
+        return socket.getHost();
     }
-
-    public void setHostName(String value) {
-        this.hostName = value;
-    }
-
+    
     public String getUserName() {
         return userName;
     }
@@ -144,12 +104,12 @@ public class WildflyMailSessionResource {
         this.isDebug = value;
     }
 
-    public String getIsEnabled() {
-        return isEnabled;
+    public void setSocket(WildflySocket socket) {
+        this.socket = socket;
     }
 
-    public void setIsEnabled(String value) {
-        this.isEnabled = value;
+    public String getPort() {
+        return String.valueOf(this.socket.getPort());
     }
 
 }
