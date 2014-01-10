@@ -39,67 +39,62 @@
  *
  * Portions Copyrighted 2014 Sun Microsystems, Inc.
  */
-package org.netbeans.modules.javaee.wildfly.nodes;
 
-import java.awt.Image;
-import javax.swing.Action;
-import static org.netbeans.modules.javaee.wildfly.nodes.Util.EJB_ENTITY_ICON;
-import static org.netbeans.modules.javaee.wildfly.nodes.Util.EJB_MESSAGE_ICON;
-import static org.netbeans.modules.javaee.wildfly.nodes.Util.EJB_SESSION_ICON;
-import org.openide.nodes.AbstractNode;
-import org.openide.nodes.Children;
-import org.openide.util.ImageUtilities;
-import org.openide.util.actions.SystemAction;
+package org.netbeans.modules.javaee.wildfly.config;
 
 /**
  *
  * @author Emmanuel Hugonnet (ehsavoie) <emmanuel.hugonnet@gmail.com>
  */
-public class WildflyEjbComponentNode extends AbstractNode {
+public class WildflySocket {
+    private boolean fixedSourcePort = false;
+    private String host;
+    private int port;
+    private int sourcePort;
+    private String sourceInterface;
+
+    public WildflySocket() {
+    }
+
+    public boolean isFixedSourcePort() {
+        return fixedSourcePort;
+    }
+
+    public void setFixedSourcePort(boolean fixedSourcePort) {
+        this.fixedSourcePort = fixedSourcePort;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public int getSourcePort() {
+        return sourcePort;
+    }
+
+    public void setSourcePort(int sourcePort) {
+        this.sourcePort = sourcePort;
+    }
+
+    public String getSourceInterface() {
+        return sourceInterface;
+    }
+
+    public void setSourceInterface(String sourceInterface) {
+        this.sourceInterface = sourceInterface;
+    }
     
-   public enum Type { 
-        MDB("message-driven-bean", EJB_MESSAGE_ICON), 
-        SINGLETON("singleton-bean", EJB_SESSION_ICON), 
-        STATELESS( "stateless-session-bean", EJB_SESSION_ICON), 
-        ENTITY("entity-bean", EJB_ENTITY_ICON), 
-        STATEFULL("stateful-session-bean", EJB_SESSION_ICON);
-        
-        private final String propertyName;
-        private final String icon;
-        Type(final String propertyName, final String icon) {
-            this.propertyName = propertyName;
-            this.icon = icon;
-        }
-        
-        public String getPropertyName() {
-            return this.propertyName;
-        }
-        
-        public String getIcon() {
-            return this.icon;
-        }
-    };
-   
-   private final Type ejbType;
-    public WildflyEjbComponentNode(String ejbName, Type ejbType) {
-        super(Children.LEAF);
-        this.ejbType = ejbType;
-        setDisplayName(ejbName);
-    }
-
-    @Override
-    public Action[] getActions(boolean context) {
-        return new SystemAction[]{};
-
-    }
-
-    @Override
-    public Image getIcon(int type) {
-        return ImageUtilities.loadImage(ejbType.getIcon());
-    }
-
-    @Override
-    public Image getOpenedIcon(int type) {
-        return getIcon(type);
-    }
+    
 }

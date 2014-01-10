@@ -39,6 +39,7 @@
  *
  * Portions Copyrighted 2014 Sun Microsystems, Inc.
  */
+
 package org.netbeans.modules.javaee.wildfly.nodes;
 
 import java.util.ArrayList;
@@ -46,7 +47,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.netbeans.modules.javaee.wildfly.WildFlyDeploymentManager;
+import org.netbeans.modules.javaee.wildfly.config.WildflyMailSessionResource;
 import org.netbeans.modules.javaee.wildfly.nodes.actions.Refreshable;
+import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 
@@ -54,38 +57,34 @@ import org.openide.util.Lookup;
  *
  * @author Emmanuel Hugonnet (ehsavoie) <emmanuel.hugonnet@gmail.com>
  */
-public class WildflyEjbComponentsChildren extends WildflyAsyncChildren implements Refreshable {
+class WildflyMailSessionsChildren extends WildflyAsyncChildren implements Refreshable {
 
-    private static final Logger LOGGER = Logger.getLogger(WildflyEjbModulesChildren.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(WildflyMailSessionsChildren.class.getName());
 
     private final Lookup lookup;
-    private final String deployment;
-    private final List<WildflyEjbComponentNode> ejbsComponents;
 
-    public WildflyEjbComponentsChildren(Lookup lookup, String deployment, List<WildflyEjbComponentNode> ejbs) {
+    public WildflyMailSessionsChildren(Lookup lookup) {
         this.lookup = lookup;
-        this.deployment = deployment;
-        this.ejbsComponents = new ArrayList<WildflyEjbComponentNode>(ejbs.size());
-        this.ejbsComponents.addAll(ejbs);
     }
 
     @Override
     public void updateKeys() {
         setKeys(new Object[]{Util.WAIT_NODE});
-        getExecutorService().submit(new WildflyDestinationsNodeUpdater(), 0);
+        getExecutorService().submit(new WildflyMailSessionsNodeUpdater(), 0);
 
     }
 
-    class WildflyDestinationsNodeUpdater implements Runnable {
+    class WildflyMailSessionsNodeUpdater implements Runnable {
 
-        List keys = new ArrayList();
+        List<WildflyMailSessionNode> keys = new ArrayList<WildflyMailSessionNode>();
 
         @Override
         public void run() {
             try {
                 WildFlyDeploymentManager dm = lookup.lookup(WildFlyDeploymentManager.class);
-                keys.addAll(dm.getClient().listDestinationForDeployment(lookup, deployment));
-                keys.addAll(ejbsComponents);
+                for(WildflyMailSessionResource mailSession : dm.getClient().listMailSessions()) {
+                    keys.add(new WildflyMailSessionNode(mailSession.getName(), mailSession, lookup));
+                }
             } catch (Exception ex) {
                 LOGGER.log(Level.INFO, null, ex);
             }
@@ -106,11 +105,8 @@ public class WildflyEjbComponentsChildren extends WildflyAsyncChildren implement
 
     @Override
     protected org.openide.nodes.Node[] createNodes(Object key) {
-        if (key instanceof WildflyDestinationNode) {
-            return new Node[]{(WildflyDestinationNode) key};
-        }
-        if (key instanceof WildflyEjbComponentNode) {
-            return new Node[]{(WildflyEjbComponentNode) key};
+        if (key instanceof WildflyMailSessionNode) {
+            return new Node[]{(WildflyMailSessionNode) key};
         }
 
         if (key instanceof String && key.equals(Util.WAIT_NODE)) {

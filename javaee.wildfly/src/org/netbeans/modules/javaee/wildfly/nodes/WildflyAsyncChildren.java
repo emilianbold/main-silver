@@ -1,7 +1,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright 2014 Oracle and/or its affiliates. All rights reserved.
+ * Copyright 2013 Oracle and/or its affiliates. All rights reserved.
  *
  * Oracle and Java are registered trademarks of Oracle and/or its affiliates.
  * Other names may be trademarks of their respective owners.
@@ -37,69 +37,23 @@
  *
  * Contributor(s):
  *
- * Portions Copyrighted 2014 Sun Microsystems, Inc.
+ * Portions Copyrighted 2013 Sun Microsystems, Inc.
  */
 package org.netbeans.modules.javaee.wildfly.nodes;
 
-import java.awt.Image;
-import javax.swing.Action;
-import static org.netbeans.modules.javaee.wildfly.nodes.Util.EJB_ENTITY_ICON;
-import static org.netbeans.modules.javaee.wildfly.nodes.Util.EJB_MESSAGE_ICON;
-import static org.netbeans.modules.javaee.wildfly.nodes.Util.EJB_SESSION_ICON;
-import org.openide.nodes.AbstractNode;
+import java.util.concurrent.ExecutorService;
 import org.openide.nodes.Children;
-import org.openide.util.ImageUtilities;
-import org.openide.util.actions.SystemAction;
+import org.openide.util.RequestProcessor;
 
 /**
  *
- * @author Emmanuel Hugonnet (ehsavoie) <emmanuel.hugonnet@gmail.com>
+ * @author Petr Hejl
  */
-public class WildflyEjbComponentNode extends AbstractNode {
-    
-   public enum Type { 
-        MDB("message-driven-bean", EJB_MESSAGE_ICON), 
-        SINGLETON("singleton-bean", EJB_SESSION_ICON), 
-        STATELESS( "stateless-session-bean", EJB_SESSION_ICON), 
-        ENTITY("entity-bean", EJB_ENTITY_ICON), 
-        STATEFULL("stateful-session-bean", EJB_SESSION_ICON);
-        
-        private final String propertyName;
-        private final String icon;
-        Type(final String propertyName, final String icon) {
-            this.propertyName = propertyName;
-            this.icon = icon;
-        }
-        
-        public String getPropertyName() {
-            return this.propertyName;
-        }
-        
-        public String getIcon() {
-            return this.icon;
-        }
-    };
-   
-   private final Type ejbType;
-    public WildflyEjbComponentNode(String ejbName, Type ejbType) {
-        super(Children.LEAF);
-        this.ejbType = ejbType;
-        setDisplayName(ejbName);
-    }
+public abstract class WildflyAsyncChildren extends Children.Keys {
 
-    @Override
-    public Action[] getActions(boolean context) {
-        return new SystemAction[]{};
+    private static final ExecutorService EXECUTOR = new RequestProcessor(WildflyAsyncChildren.class);
 
-    }
-
-    @Override
-    public Image getIcon(int type) {
-        return ImageUtilities.loadImage(ejbType.getIcon());
-    }
-
-    @Override
-    public Image getOpenedIcon(int type) {
-        return getIcon(type);
+    public final ExecutorService getExecutorService() {
+        return EXECUTOR;
     }
 }

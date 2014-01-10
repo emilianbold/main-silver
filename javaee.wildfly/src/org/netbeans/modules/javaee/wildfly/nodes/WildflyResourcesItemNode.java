@@ -39,84 +39,74 @@
  *
  * Portions Copyrighted 2014 Sun Microsystems, Inc.
  */
+
 package org.netbeans.modules.javaee.wildfly.nodes;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.netbeans.modules.javaee.wildfly.WildFlyDeploymentManager;
+import java.awt.Image;
+import org.netbeans.modules.javaee.wildfly.nodes.actions.RefreshModulesAction;
+import org.netbeans.modules.javaee.wildfly.nodes.actions.RefreshModulesCookie;
 import org.netbeans.modules.javaee.wildfly.nodes.actions.Refreshable;
+import org.openide.filesystems.FileUtil;
+import org.openide.loaders.DataFolder;
+import org.openide.nodes.AbstractNode;
+import org.openide.nodes.Children;
 import org.openide.nodes.Node;
+import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
+import org.openide.util.NbBundle;
+import org.openide.util.actions.SystemAction;
 
 /**
  *
  * @author Emmanuel Hugonnet (ehsavoie) <emmanuel.hugonnet@gmail.com>
  */
-public class WildflyEjbComponentsChildren extends WildflyAsyncChildren implements Refreshable {
+public class WildflyResourcesItemNode extends AbstractNode {
+    
+    private final String icon;
 
-    private static final Logger LOGGER = Logger.getLogger(WildflyEjbModulesChildren.class.getName());
-
-    private final Lookup lookup;
-    private final String deployment;
-    private final List<WildflyEjbComponentNode> ejbsComponents;
-
-    public WildflyEjbComponentsChildren(Lookup lookup, String deployment, List<WildflyEjbComponentNode> ejbs) {
-        this.lookup = lookup;
-        this.deployment = deployment;
-        this.ejbsComponents = new ArrayList<WildflyEjbComponentNode>(ejbs.size());
-        this.ejbsComponents.addAll(ejbs);
+    public WildflyResourcesItemNode(Children children, String name, String icon) {
+        super(children);
+        setDisplayName(name);
+        this.icon = icon;
+        if (getChildren() instanceof Refreshable) {
+            getCookieSet().add(new RefreshModulesCookieImpl((Refreshable) getChildren()));
+        }
     }
 
     @Override
-    public void updateKeys() {
-        setKeys(new Object[]{Util.WAIT_NODE});
-        getExecutorService().submit(new WildflyDestinationsNodeUpdater(), 0);
-
+    public Image getIcon(int type) {
+        return ImageUtilities.loadImage(icon);
     }
 
-    class WildflyDestinationsNodeUpdater implements Runnable {
+    @Override
+    public Image getOpenedIcon(int type) {        
+        return ImageUtilities.loadImage(icon);
+    }
 
-        List keys = new ArrayList();
+    @Override
+    public javax.swing.Action[] getActions(boolean context) {
+        if (getChildren() instanceof Refreshable) {
+            return new SystemAction[]{
+                SystemAction.get(RefreshModulesAction.class)
+            };
+        }
 
+        return new SystemAction[]{};
+    }
+
+    /**
+     * Implementation of the RefreshModulesCookie
+     */
+    private static class RefreshModulesCookieImpl implements RefreshModulesCookie {
+        Refreshable children;
+        public RefreshModulesCookieImpl(Refreshable children) {
+            this.children = children;
+        }
         @Override
-        public void run() {
-            try {
-                WildFlyDeploymentManager dm = lookup.lookup(WildFlyDeploymentManager.class);
-                keys.addAll(dm.getClient().listDestinationForDeployment(lookup, deployment));
-                keys.addAll(ejbsComponents);
-            } catch (Exception ex) {
-                LOGGER.log(Level.INFO, null, ex);
-            }
-
-            setKeys(keys);
+        public void refresh() {
+            children.updateKeys();
         }
-    }
-
-    @Override
-    protected void addNotify() {
-        updateKeys();
-    }
-
-    @Override
-    protected void removeNotify() {
-        setKeys(java.util.Collections.EMPTY_SET);
-    }
-
-    @Override
-    protected org.openide.nodes.Node[] createNodes(Object key) {
-        if (key instanceof WildflyDestinationNode) {
-            return new Node[]{(WildflyDestinationNode) key};
-        }
-        if (key instanceof WildflyEjbComponentNode) {
-            return new Node[]{(WildflyEjbComponentNode) key};
-        }
-
-        if (key instanceof String && key.equals(Util.WAIT_NODE)) {
-            return new Node[]{Util.createWaitNode()};
-        }
-        return null;
     }
 
 }
+
