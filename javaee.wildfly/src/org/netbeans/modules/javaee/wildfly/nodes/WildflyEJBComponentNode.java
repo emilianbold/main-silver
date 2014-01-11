@@ -55,7 +55,7 @@ import org.openide.util.actions.SystemAction;
  *
  * @author Emmanuel Hugonnet (ehsavoie) <emmanuel.hugonnet@gmail.com>
  */
-public class WildflyEJBComponentNode extends AbstractNode {
+public class WildflyEjbComponentNode extends AbstractNode {
     
    public enum Type { 
         MDB("message-driven-bean", EJB_MESSAGE_ICON), 
@@ -81,7 +81,7 @@ public class WildflyEJBComponentNode extends AbstractNode {
     };
    
    private final Type ejbType;
-    public WildflyEJBComponentNode(String ejbName, Type ejbType) {
+    public WildflyEjbComponentNode(String ejbName, Type ejbType) {
         super(Children.LEAF);
         this.ejbType = ejbType;
         setDisplayName(ejbName);
