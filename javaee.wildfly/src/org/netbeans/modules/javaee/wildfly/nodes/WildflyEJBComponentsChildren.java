@@ -54,18 +54,18 @@ import org.openide.util.Lookup;
  *
  * @author Emmanuel Hugonnet (ehsavoie) <emmanuel.hugonnet@gmail.com>
  */
-public class WildflyEJBComponentsChildren extends JBAsyncChildren implements Refreshable {
+public class WildflyEjbComponentsChildren extends WildflyAsyncChildren implements Refreshable {
 
-    private static final Logger LOGGER = Logger.getLogger(JBEjbModulesChildren.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(WildflyEjbModulesChildren.class.getName());
 
     private final Lookup lookup;
     private final String deployment;
-    private final List<WildflyEJBComponentNode> ejbsComponents;
+    private final List<WildflyEjbComponentNode> ejbsComponents;
 
-    public WildflyEJBComponentsChildren(Lookup lookup, String deployment, List<WildflyEJBComponentNode> ejbs) {
+    public WildflyEjbComponentsChildren(Lookup lookup, String deployment, List<WildflyEjbComponentNode> ejbs) {
         this.lookup = lookup;
         this.deployment = deployment;
-        this.ejbsComponents = new ArrayList<WildflyEJBComponentNode>(ejbs.size());
+        this.ejbsComponents = new ArrayList<WildflyEjbComponentNode>(ejbs.size());
         this.ejbsComponents.addAll(ejbs);
     }
 
@@ -106,11 +106,11 @@ public class WildflyEJBComponentsChildren extends JBAsyncChildren implements Ref
 
     @Override
     protected org.openide.nodes.Node[] createNodes(Object key) {
-        if (key instanceof JBDestinationNode) {
-            return new Node[]{(JBDestinationNode) key};
+        if (key instanceof WildflyDestinationNode) {
+            return new Node[]{(WildflyDestinationNode) key};
         }
-        if (key instanceof WildflyEJBComponentNode) {
-            return new Node[]{(WildflyEJBComponentNode) key};
+        if (key instanceof WildflyEjbComponentNode) {
+            return new Node[]{(WildflyEjbComponentNode) key};
         }
 
         if (key instanceof String && key.equals(Util.WAIT_NODE)) {

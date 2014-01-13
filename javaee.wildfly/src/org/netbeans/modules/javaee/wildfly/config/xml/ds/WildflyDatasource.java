@@ -46,7 +46,7 @@ package org.netbeans.modules.javaee.wildfly.config.xml.ds;
  *
  * @author Emmanuel Hugonnet (ehsavoie) <emmanuel.hugonnet@gmail.com>
  */
-public class WildflyDatasource {
+public class WildflyDataSource {
      private String url;
     private String username;
     private String password;
@@ -54,7 +54,7 @@ public class WildflyDatasource {
     private String name;
     private String jndiName;
 
-    public WildflyDatasource() {
+    public WildflyDataSource() {
     }
 
     public String getUrl() {
