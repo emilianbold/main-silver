@@ -51,9 +51,9 @@ import org.netbeans.modules.javascript2.lexer.api.JsTokenId;
  *
  */
 
-public class JsKeyWords {
+public class JsKeywords {
 
-    protected static enum CompletionType {
+    public static enum CompletionType {
         SIMPLE,
         CURSOR_INSIDE_BRACKETS,
         ENDS_WITH_CURLY_BRACKETS,
@@ -63,49 +63,77 @@ public class JsKeyWords {
         ENDS_WITH_DOT
     };
 
-    protected final static Map<String, CompletionType> KEYWORDS = new HashMap<String, CompletionType>();
+    protected final static Map<String, CompletionDescription> KEYWORDS = new HashMap<>();
+
     static {
-        KEYWORDS.put(JsTokenId.KEYWORD_BREAK.fixedText(), CompletionType.ENDS_WITH_SEMICOLON);
-        KEYWORDS.put(JsTokenId.KEYWORD_CASE.fixedText(), CompletionType.ENDS_WITH_COLON);
-        KEYWORDS.put(JsTokenId.KEYWORD_CATCH.fixedText(), CompletionType.CURSOR_INSIDE_BRACKETS);
-        KEYWORDS.put(JsTokenId.KEYWORD_CONTINUE.fixedText(), CompletionType.ENDS_WITH_SEMICOLON);
-        KEYWORDS.put(JsTokenId.KEYWORD_DEBUGGER.fixedText(), CompletionType.ENDS_WITH_SEMICOLON);
-        KEYWORDS.put(JsTokenId.KEYWORD_DEFAULT.fixedText(), CompletionType.ENDS_WITH_COLON);
-        KEYWORDS.put(JsTokenId.KEYWORD_DELETE.fixedText(), CompletionType.CURSOR_INSIDE_BRACKETS);
-        KEYWORDS.put(JsTokenId.KEYWORD_DO.fixedText(), CompletionType.CURSOR_INSIDE_BRACKETS);
-        KEYWORDS.put(JsTokenId.KEYWORD_ELSE.fixedText(), CompletionType.CURSOR_INSIDE_BRACKETS);
-        KEYWORDS.put(JsTokenId.KEYWORD_EXPORT.fixedText(), CompletionType.ENDS_WITH_SPACE);
-        KEYWORDS.put(JsTokenId.KEYWORD_FALSE.fixedText(), CompletionType.SIMPLE);
-        KEYWORDS.put(JsTokenId.KEYWORD_FINALLY.fixedText(), CompletionType.ENDS_WITH_CURLY_BRACKETS);
-        KEYWORDS.put(JsTokenId.KEYWORD_FOR.fixedText(), CompletionType.CURSOR_INSIDE_BRACKETS);
-        KEYWORDS.put(JsTokenId.KEYWORD_FUNCTION.fixedText(), CompletionType.ENDS_WITH_SPACE);
-        KEYWORDS.put(JsTokenId.KEYWORD_IF.fixedText(), CompletionType.CURSOR_INSIDE_BRACKETS);
-        KEYWORDS.put(JsTokenId.KEYWORD_IMPORT.fixedText(), CompletionType.ENDS_WITH_SPACE);
-        KEYWORDS.put(JsTokenId.KEYWORD_IN.fixedText(), CompletionType.ENDS_WITH_SPACE);
-        KEYWORDS.put(JsTokenId.KEYWORD_INSTANCEOF.fixedText(), CompletionType.ENDS_WITH_SPACE);
-        KEYWORDS.put(JsTokenId.KEYWORD_NEW.fixedText(), CompletionType.ENDS_WITH_SPACE);
-        KEYWORDS.put(JsTokenId.KEYWORD_NULL.fixedText(), CompletionType.SIMPLE);
-        KEYWORDS.put(JsTokenId.KEYWORD_RETURN.fixedText(), CompletionType.ENDS_WITH_SPACE);
-        KEYWORDS.put(JsTokenId.KEYWORD_SWITCH.fixedText(), CompletionType.CURSOR_INSIDE_BRACKETS);
-        KEYWORDS.put(JsTokenId.KEYWORD_THIS.fixedText(), CompletionType.ENDS_WITH_DOT);
-        KEYWORDS.put(JsTokenId.KEYWORD_THROW.fixedText(), CompletionType.ENDS_WITH_SPACE);
-        KEYWORDS.put(JsTokenId.KEYWORD_TRUE.fixedText(), CompletionType.SIMPLE);
-        KEYWORDS.put(JsTokenId.KEYWORD_TRY.fixedText(), CompletionType.ENDS_WITH_CURLY_BRACKETS);
-        KEYWORDS.put(JsTokenId.KEYWORD_TYPEOF.fixedText(), CompletionType.ENDS_WITH_SPACE);
-        KEYWORDS.put(JsTokenId.KEYWORD_VAR.fixedText(), CompletionType.ENDS_WITH_SPACE);
-        KEYWORDS.put(JsTokenId.KEYWORD_VOID.fixedText(), CompletionType.ENDS_WITH_SPACE);
-        KEYWORDS.put(JsTokenId.KEYWORD_WHILE.fixedText(), CompletionType.CURSOR_INSIDE_BRACKETS);
-        KEYWORDS.put(JsTokenId.KEYWORD_WITH.fixedText(), CompletionType.ENDS_WITH_SPACE);
-        
-        // keywords added with ESCMA SCript 6
-        KEYWORDS.put(JsTokenId.RESERVED_LET.fixedText(), CompletionType.ENDS_WITH_SPACE);
-        KEYWORDS.put(JsTokenId.KEYWORD_CLASS.fixedText(), CompletionType.ENDS_WITH_SPACE);
-        KEYWORDS.put(JsTokenId.KEYWORD_CONST.fixedText(), CompletionType.ENDS_WITH_SPACE);
-        KEYWORDS.put(JsTokenId.KEYWORD_EXTENDS.fixedText(), CompletionType.ENDS_WITH_SPACE);
-        KEYWORDS.put(JsTokenId.KEYWORD_EXPORT.fixedText(), CompletionType.ENDS_WITH_SPACE);
-        KEYWORDS.put(JsTokenId.KEYWORD_IMPORT.fixedText(), CompletionType.ENDS_WITH_SPACE);
-        KEYWORDS.put(JsTokenId.KEYWORD_SUPER.fixedText(), CompletionType.ENDS_WITH_SPACE);
-        KEYWORDS.put(JsTokenId.KEYWORD_YIELD.fixedText(), CompletionType.ENDS_WITH_SPACE);
-        KEYWORDS.put(JsTokenId.KEYWORD_WITH.fixedText(), CompletionType.ENDS_WITH_SPACE);
+        KEYWORDS.put(JsTokenId.KEYWORD_BREAK.fixedText(), new CompletionDescription(CompletionType.ENDS_WITH_SEMICOLON));
+        KEYWORDS.put(JsTokenId.KEYWORD_CASE.fixedText(), new CompletionDescription(CompletionType.ENDS_WITH_COLON));
+        KEYWORDS.put(JsTokenId.KEYWORD_CATCH.fixedText(), new CompletionDescription(CompletionType.CURSOR_INSIDE_BRACKETS));
+        KEYWORDS.put(JsTokenId.KEYWORD_CONTINUE.fixedText(), new CompletionDescription(CompletionType.ENDS_WITH_SEMICOLON));
+        KEYWORDS.put(JsTokenId.KEYWORD_DEBUGGER.fixedText(), new CompletionDescription(CompletionType.ENDS_WITH_SEMICOLON));
+        KEYWORDS.put(JsTokenId.KEYWORD_DEFAULT.fixedText(), new CompletionDescription(CompletionType.ENDS_WITH_COLON));
+        KEYWORDS.put(JsTokenId.KEYWORD_DELETE.fixedText(), new CompletionDescription(CompletionType.CURSOR_INSIDE_BRACKETS));
+        KEYWORDS.put(JsTokenId.KEYWORD_DO.fixedText(), new CompletionDescription(CompletionType.CURSOR_INSIDE_BRACKETS));
+        KEYWORDS.put(JsTokenId.KEYWORD_ELSE.fixedText(), new CompletionDescription(CompletionType.CURSOR_INSIDE_BRACKETS));
+        KEYWORDS.put(JsTokenId.KEYWORD_EXPORT.fixedText(), new CompletionDescription(CompletionType.ENDS_WITH_SPACE));
+        KEYWORDS.put(JsTokenId.KEYWORD_FALSE.fixedText(), new CompletionDescription(CompletionType.SIMPLE));
+        KEYWORDS.put(JsTokenId.KEYWORD_FINALLY.fixedText(), new CompletionDescription(CompletionType.ENDS_WITH_CURLY_BRACKETS));
+        KEYWORDS.put(JsTokenId.KEYWORD_FOR.fixedText(), new CompletionDescription(CompletionType.CURSOR_INSIDE_BRACKETS));
+        KEYWORDS.put(JsTokenId.KEYWORD_FUNCTION.fixedText(), new CompletionDescription(CompletionType.ENDS_WITH_SPACE));
+        KEYWORDS.put(JsTokenId.KEYWORD_IF.fixedText(), new CompletionDescription(CompletionType.CURSOR_INSIDE_BRACKETS));
+        KEYWORDS.put(JsTokenId.KEYWORD_IMPORT.fixedText(), new CompletionDescription(CompletionType.ENDS_WITH_SPACE));
+        KEYWORDS.put(JsTokenId.KEYWORD_IN.fixedText(), new CompletionDescription(CompletionType.ENDS_WITH_SPACE));
+        KEYWORDS.put(JsTokenId.KEYWORD_INSTANCEOF.fixedText(), new CompletionDescription(CompletionType.ENDS_WITH_SPACE));
+        KEYWORDS.put(JsTokenId.KEYWORD_NEW.fixedText(), new CompletionDescription(CompletionType.ENDS_WITH_SPACE));
+        KEYWORDS.put(JsTokenId.KEYWORD_NULL.fixedText(), new CompletionDescription(CompletionType.SIMPLE));
+        KEYWORDS.put(JsTokenId.KEYWORD_RETURN.fixedText(), new CompletionDescription(CompletionType.ENDS_WITH_SPACE));
+        KEYWORDS.put(JsTokenId.KEYWORD_SWITCH.fixedText(), new CompletionDescription(CompletionType.CURSOR_INSIDE_BRACKETS));
+        KEYWORDS.put(JsTokenId.KEYWORD_THIS.fixedText(), new CompletionDescription(CompletionType.ENDS_WITH_DOT));
+        KEYWORDS.put(JsTokenId.KEYWORD_THROW.fixedText(), new CompletionDescription(CompletionType.ENDS_WITH_SPACE));
+        KEYWORDS.put(JsTokenId.KEYWORD_TRUE.fixedText(), new CompletionDescription(CompletionType.SIMPLE));
+        KEYWORDS.put(JsTokenId.KEYWORD_TRY.fixedText(), new CompletionDescription(CompletionType.ENDS_WITH_CURLY_BRACKETS));
+        KEYWORDS.put(JsTokenId.KEYWORD_TYPEOF.fixedText(), new CompletionDescription(CompletionType.ENDS_WITH_SPACE));
+        KEYWORDS.put(JsTokenId.KEYWORD_VAR.fixedText(), new CompletionDescription(CompletionType.ENDS_WITH_SPACE));
+        KEYWORDS.put(JsTokenId.KEYWORD_VOID.fixedText(), new CompletionDescription(CompletionType.ENDS_WITH_SPACE));
+        KEYWORDS.put(JsTokenId.KEYWORD_WHILE.fixedText(), new CompletionDescription(CompletionType.CURSOR_INSIDE_BRACKETS));
+        KEYWORDS.put(JsTokenId.KEYWORD_WITH.fixedText(), new CompletionDescription(CompletionType.ENDS_WITH_SPACE));
+
+        // keywords added with ESCMA Script 6
+        KEYWORDS.put(JsTokenId.RESERVED_LET.fixedText(), new CompletionDescription(CompletionType.ENDS_WITH_SPACE, JsVersion.ECMA6));
+        KEYWORDS.put(JsTokenId.KEYWORD_CLASS.fixedText(), new CompletionDescription(CompletionType.ENDS_WITH_SPACE, JsVersion.ECMA6));
+        KEYWORDS.put(JsTokenId.KEYWORD_CONST.fixedText(), new CompletionDescription(CompletionType.ENDS_WITH_SPACE, JsVersion.ECMA6));
+        KEYWORDS.put(JsTokenId.KEYWORD_EXTENDS.fixedText(), new CompletionDescription(CompletionType.ENDS_WITH_SPACE, JsVersion.ECMA6));
+        KEYWORDS.put(JsTokenId.KEYWORD_EXPORT.fixedText(), new CompletionDescription(CompletionType.ENDS_WITH_SPACE, JsVersion.ECMA6));
+        KEYWORDS.put(JsTokenId.KEYWORD_IMPORT.fixedText(), new CompletionDescription(CompletionType.ENDS_WITH_SPACE, JsVersion.ECMA6));
+        KEYWORDS.put(JsTokenId.KEYWORD_SUPER.fixedText(), new CompletionDescription(CompletionType.ENDS_WITH_SPACE, JsVersion.ECMA6));
+        KEYWORDS.put(JsTokenId.KEYWORD_YIELD.fixedText(), new CompletionDescription(CompletionType.ENDS_WITH_SPACE, JsVersion.ECMA6));
+
+        // keywords added with ESCMA Script 7
+        KEYWORDS.put(JsTokenId.RESERVED_AWAIT.fixedText(), new CompletionDescription(CompletionType.ENDS_WITH_SPACE, JsVersion.ECMA7));
+        KEYWORDS.put("async", new CompletionDescription(CompletionType.ENDS_WITH_SPACE, JsVersion.ECMA7)); // NOI18N
+    }
+
+    public static class CompletionDescription {
+
+        private final CompletionType type;
+
+        private final JsVersion version;
+
+        private CompletionDescription(CompletionType type) {
+            this(type, null);
+        }
+
+        private CompletionDescription(CompletionType type, JsVersion version) {
+            this.type = type;
+            this.version = version;
+        }
+
+        public CompletionType getType() {
+            return type;
+        }
+
+        public JsVersion getVersion() {
+            return version;
+        }
     }
 }
