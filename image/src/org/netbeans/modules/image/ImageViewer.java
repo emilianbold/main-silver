@@ -62,6 +62,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
@@ -131,8 +132,9 @@ public class ImageViewer extends CloneableTopComponent {
     private static final RequestProcessor RP = new RequestProcessor("Image loader", 1, true);
     
     private RequestProcessor.Task loadImageTask;
-    private String getImageHeight = "";
-    private String getImageWidth = "";
+    private String imageHeight = "";
+    private String imageWidth = "";
+    private String imageSize = "";
     
     /** Default constructor. Must be here, used during de-externalization */
     public ImageViewer () {
@@ -164,6 +166,12 @@ public class ImageViewer extends CloneableTopComponent {
         setToolTipText(FileUtil.getFileDisplayName(obj.getPrimaryFile()));
         
         storedObject = obj;
+        
+        File imageFile = new File(storedObject.getImageURL().getFile());
+        
+        if (imageFile.exists()) {
+            imageSize = Long.toString(imageFile.length() / 1024);
+        }
             
         // force closing panes in all workspaces, default is in current only
         setCloseOperation(TopComponent.CLOSE_EACH);
@@ -461,14 +469,21 @@ public class ImageViewer extends CloneableTopComponent {
             }
         });
     }
+    
+    private void createToolbar() {
+        /* compose the whole panel: */
+        JToolBar toolbar = createToolBar();
+        setLayout(new BorderLayout());
+        add(toolbar, BorderLayout.NORTH);
+    }
 
     private void showImage(NBImageIcon image, String errorMessage) {
         boolean wasValid = (storedImage != null);
         storedImage = image;
         boolean isValid = (storedImage != null);
         
-        getImageWidth = Integer.toString(storedImage.getIconWidth());
-        getImageHeight = Integer.toString(storedImage.getIconHeight());
+        imageWidth = Integer.toString(storedImage.getIconWidth());
+        imageHeight = Integer.toString(storedImage.getIconHeight());
         
         createToolbar();
         
@@ -490,13 +505,6 @@ public class ImageViewer extends CloneableTopComponent {
         }
         revalidate();
         repaint();        
-    }
-
-    private void createToolbar() {
-        /* compose the whole panel: */
-        JToolBar toolbar = createToolBar();
-        setLayout(new BorderLayout());
-        add(toolbar, BorderLayout.NORTH);
     }
 
     /** Creates toolbar. */
@@ -550,8 +558,16 @@ public class ImageViewer extends CloneableTopComponent {
         toolBar.add(button = getGridButton());
         toolbarButtons.add(button);
         
+        // Image Dimension
+        // TODO: Make label, not button
         toolBar.addSeparator(new Dimension(11, 0));
-        toolBar.add(button = new JButton("Dimensions: " + getImageWidth + " x " + getImageHeight));
+        toolBar.add(button = new JButton("Dimensions: " + imageWidth + " x " + imageHeight));
+        toolbarButtons.add(button);
+        
+        // Image File Size in KB
+        // TODO: Make label, not button
+        toolBar.addSeparator(new Dimension(11, 0));
+        toolBar.add(button = new JButton("Size: " + imageSize + "kb"));
         toolbarButtons.add(button);
 
         for (Iterator it = toolbarButtons.iterator(); it.hasNext(); ) {
