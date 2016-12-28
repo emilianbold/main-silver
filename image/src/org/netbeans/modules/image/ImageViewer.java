@@ -74,6 +74,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.progress.ProgressHandleFactory;
 import org.openide.filesystems.FileObject;
@@ -127,6 +131,8 @@ public class ImageViewer extends CloneableTopComponent {
     private static final RequestProcessor RP = new RequestProcessor("Image loader", 1, true);
     
     private RequestProcessor.Task loadImageTask;
+    private String getImageHeight = "";
+    private String getImageWidth = "";
     
     /** Default constructor. Must be here, used during de-externalization */
     public ImageViewer () {
@@ -465,6 +471,9 @@ public class ImageViewer extends CloneableTopComponent {
         boolean wasValid = (storedImage != null);
         storedImage = image;
         boolean isValid = (storedImage != null);
+        
+        getImageWidth = Integer.toString(storedImage.getIconWidth());
+        getImageHeight = Integer.toString(storedImage.getIconHeight());
 
         if (wasValid && isValid) {
             reloadIcon();
@@ -535,6 +544,10 @@ public class ImageViewer extends CloneableTopComponent {
         toolbarButtons.add(button);
         toolBar.addSeparator(new Dimension(11, 0));
         toolBar.add(button = getGridButton());
+        toolbarButtons.add(button);
+        
+        toolBar.addSeparator(new Dimension(11, 0));
+        toolBar.add(button = new JButton("Dimensions: " + getImageWidth + " x " + getImageHeight));
         toolbarButtons.add(button);
 
         for (Iterator it = toolbarButtons.iterator(); it.hasNext(); ) {
@@ -764,7 +777,7 @@ public class ImageViewer extends CloneableTopComponent {
     /** Gets grid button.*/
     private JButton getGridButton() {
         // PENDING buttons should have their own icons.
-        final JButton button = new JButton(" # "); // NOI18N
+        final JButton button = new JButton((NbBundle.getBundle(ImageViewer.class).getString("LBL_ShowHideGrid"))); // NOI18N
         button.setToolTipText (NbBundle.getBundle(ImageViewer.class).getString("LBL_ShowHideGrid"));
         button.getAccessibleContext().setAccessibleDescription(NbBundle.getBundle(ImageViewer.class).getString("ACS_Grid_BTN"));
         button.setMnemonic(NbBundle.getBundle(ImageViewer.class).getString("ACS_Grid_BTN_Mnem").charAt(0));
