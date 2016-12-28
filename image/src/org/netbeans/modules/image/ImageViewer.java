@@ -168,11 +168,6 @@ public class ImageViewer extends CloneableTopComponent {
         // force closing panes in all workspaces, default is in current only
         setCloseOperation(TopComponent.CLOSE_EACH);
         
-        /* compose the whole panel: */
-        JToolBar toolbar = createToolBar();
-        setLayout(new BorderLayout());
-        add(toolbar, BorderLayout.NORTH);
-
         getAccessibleContext().setAccessibleDescription(NbBundle.getMessage(ImageViewer.class, "ACS_ImageViewer"));        
         
         nameChangeL = new PropertyChangeListener() {
@@ -474,7 +469,9 @@ public class ImageViewer extends CloneableTopComponent {
         
         getImageWidth = Integer.toString(storedImage.getIconWidth());
         getImageHeight = Integer.toString(storedImage.getIconHeight());
-
+        
+        createToolbar();
+        
         if (wasValid && isValid) {
             reloadIcon();
             return;
@@ -493,6 +490,13 @@ public class ImageViewer extends CloneableTopComponent {
         }
         revalidate();
         repaint();        
+    }
+
+    private void createToolbar() {
+        /* compose the whole panel: */
+        JToolBar toolbar = createToolBar();
+        setLayout(new BorderLayout());
+        add(toolbar, BorderLayout.NORTH);
     }
 
     /** Creates toolbar. */
