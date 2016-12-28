@@ -781,10 +781,17 @@ public class ImageViewer extends CloneableTopComponent {
         button.setToolTipText (NbBundle.getBundle(ImageViewer.class).getString("LBL_ShowHideGrid"));
         button.getAccessibleContext().setAccessibleDescription(NbBundle.getBundle(ImageViewer.class).getString("ACS_Grid_BTN"));
         button.setMnemonic(NbBundle.getBundle(ImageViewer.class).getString("ACS_Grid_BTN_Mnem").charAt(0));
+        
+        Border line = new LineBorder(Color.BLACK);
+        final Border margin = new EmptyBorder(2, 2, 2, 2);
+        final Border compound = new CompoundBorder(line, margin);
+        
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 showGrid = !showGrid;
                 panel.repaint(0, 0, panel.getWidth(), panel.getHeight());
+                
+                button.setBorder(showGrid ? compound : new CompoundBorder(null, margin));
             }
         });
         
