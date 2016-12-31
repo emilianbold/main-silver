@@ -269,11 +269,11 @@ class SQLStatementGenerator {
 
         StringBuilder sql = new StringBuilder();
         List<DBColumn> columns = table.getColumnList();
-        sql.append("CREATE TABLE ").append(table.getQualifiedName(false)).append(" ("); // NOI18N
+        sql.append("CREATE TABLE ").append(table.getQualifiedName(false)).append(" (\n   "); // NOI18N
         int count = 0;
         for (DBColumn col : columns) {
             if (count++ > 0) {
-                sql.append(", "); // NOI18N
+                sql.append(",\n   "); // NOI18N
             }
 
             String typeName = col.getTypeName();
@@ -316,7 +316,7 @@ class SQLStatementGenerator {
         DBPrimaryKey pk = table.getPrimaryKey();
         if (pk != null) {
             count = 0;
-            sql.append(", PRIMARY KEY ("); // NOI18N
+            sql.append(",\n   PRIMARY KEY ("); // NOI18N
             for (String col : pk.getColumnNames()) {
                 if (count++ > 0) {
                     sql.append(", "); // NOI18N
@@ -325,7 +325,7 @@ class SQLStatementGenerator {
             }
             sql.append(")"); // NOI18N
         }
-        sql.append(")"); // NOI18N
+        sql.append("\n)"); // NOI18N
 
         return sql.toString();
     }
