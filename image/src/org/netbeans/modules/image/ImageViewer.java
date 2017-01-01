@@ -562,12 +562,12 @@ public class ImageViewer extends CloneableTopComponent {
         
         // Image Dimension
         toolBar.addSeparator(new Dimension(11, 0));
-        toolBar.add(label = new JLabel("Dimensions: " + imageWidth + " x " + imageHeight));
+        toolBar.add(label = new JLabel(NbBundle.getBundle(ImageViewer.class).getString("LBL_ImageDimensions") + " " + imageWidth + " x " + imageHeight));
         toolbarLabels.add(label);
         
         // Image File Size in KB
         toolBar.addSeparator(new Dimension(11, 0));
-        toolBar.add(label = new JLabel("Size: " + imageSize + "kb"));
+        toolBar.add(label = new JLabel(NbBundle.getBundle(ImageViewer.class).getString("LBL_ImageSize") + " " + imageSize + "kb"));
         toolbarLabels.add(label);
         
         for (Iterator it = toolbarLabels.iterator(); it.hasNext(); ) {
