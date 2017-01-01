@@ -62,6 +62,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
@@ -72,8 +73,13 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.progress.ProgressHandleFactory;
 import org.openide.filesystems.FileObject;
@@ -121,12 +127,17 @@ public class ImageViewer extends CloneableTopComponent {
     /** collection of all buttons in the toolbar */
     private final Collection/*<JButton>*/ toolbarButtons
                                           = new ArrayList/*<JButton>*/(11);
-    
+
     private Component view;
     
     private static final RequestProcessor RP = new RequestProcessor("Image loader", 1, true);
     
     private RequestProcessor.Task loadImageTask;
+    private String imageHeight = "";
+    private String imageWidth = "";
+    private double imageSizeBinary = 0f;
+    private double imageSizeDecimal = 0f;
+    private String imageSizeLabel = "LBL_ImageSizeBytes";
     
     /** Default constructor. Must be here, used during de-externalization */
     public ImageViewer () {
@@ -152,21 +163,40 @@ public class ImageViewer extends CloneableTopComponent {
         panel.repaint();
     }
     
+    private double roundToTwoDecimalPlaces(double calc) {
+        return Math.round(100.0 * calc) / 100.0;
+    }
+    
     /** Initializes member variables and set listener for name changes on DataObject. */
     private void initialize(ImageDataObject obj) {
         TopComponent.NodeName.connect (this, obj.getNodeDelegate ());
         setToolTipText(FileUtil.getFileDisplayName(obj.getPrimaryFile()));
         
         storedObject = obj;
+        
+        FileObject imageFile = storedObject.getPrimaryFile();
+        
+        if (imageFile.isValid()) {
+            imageSizeBinary = imageFile.getSize();
+            double binaryPrefix = 1024f;
+            double decimalPrefix = 1000f;
+
+            // KB to MB
+            if(imageSizeBinary >= (binaryPrefix * binaryPrefix)) {
+                imageSizeDecimal = roundToTwoDecimalPlaces(imageSizeBinary / (decimalPrefix * decimalPrefix));
+                imageSizeBinary = roundToTwoDecimalPlaces(imageSizeBinary / (binaryPrefix * binaryPrefix));
+                imageSizeLabel = "LBL_ImageSizeMb";
+              // Bytes to KB
+            } else if(imageSizeBinary >= binaryPrefix) {
+                imageSizeDecimal = roundToTwoDecimalPlaces(imageSizeBinary / decimalPrefix);
+                imageSizeBinary = roundToTwoDecimalPlaces(imageSizeBinary / binaryPrefix);
+                imageSizeLabel = "LBL_ImageSizeKb";
+            }
+        }
             
         // force closing panes in all workspaces, default is in current only
         setCloseOperation(TopComponent.CLOSE_EACH);
         
-        /* compose the whole panel: */
-        JToolBar toolbar = createToolBar();
-        setLayout(new BorderLayout());
-        add(toolbar, BorderLayout.NORTH);
-
         getAccessibleContext().setAccessibleDescription(NbBundle.getMessage(ImageViewer.class, "ACS_ImageViewer"));        
         
         nameChangeL = new PropertyChangeListener() {
@@ -460,12 +490,24 @@ public class ImageViewer extends CloneableTopComponent {
             }
         });
     }
+    
+    private void createToolbar() {
+        /* compose the whole panel: */
+        JToolBar toolbar = createToolBar();
+        setLayout(new BorderLayout());
+        add(toolbar, BorderLayout.NORTH);
+    }
 
     private void showImage(NBImageIcon image, String errorMessage) {
         boolean wasValid = (storedImage != null);
         storedImage = image;
         boolean isValid = (storedImage != null);
-
+        
+        imageWidth = Integer.toString(storedImage.getIconWidth());
+        imageHeight = Integer.toString(storedImage.getIconHeight());
+        
+        createToolbar();
+        
         if (wasValid && isValid) {
             reloadIcon();
             return;
@@ -511,6 +553,7 @@ public class ImageViewer extends CloneableTopComponent {
         toolBar.addSeparator(new Dimension(11, 0));
         
         JButton button;
+        JToggleButton toggleButton;
         
         toolBar.add(button = getZoomButton(1,1));
         toolbarButtons.add(button);
@@ -533,10 +576,21 @@ public class ImageViewer extends CloneableTopComponent {
 //        sa.putValue (Action.SHORT_DESCRIPTION, NbBundle.getBundle(ImageViewer.class).getString("LBL_CustomZoom"));
         toolBar.add (button = getZoomButton ());
         toolbarButtons.add(button);
-        toolBar.addSeparator(new Dimension(11, 0));
-        toolBar.add(button = getGridButton());
-        toolbarButtons.add(button);
 
+        toolBar.addSeparator(new Dimension(11, 0));
+        toolBar.add(toggleButton = getGridButton());
+        toggleButton.setFocusable(false);
+        
+        JLabel label;
+        
+        // Image Dimension
+        toolBar.addSeparator(new Dimension(11, 0));
+        toolBar.add(label = new JLabel(NbBundle.getMessage(ImageViewer.class, "LBL_ImageDimensions", imageWidth, imageHeight)));
+        
+        // Image File Size in KB
+        toolBar.addSeparator(new Dimension(11, 0));
+        toolBar.add(label = new JLabel(NbBundle.getMessage(ImageViewer.class, imageSizeLabel, imageSizeDecimal, imageSizeBinary)));
+        
         for (Iterator it = toolbarButtons.iterator(); it.hasNext(); ) {
             ((JButton) it.next()).setFocusable(false);
         }
@@ -762,12 +816,13 @@ public class ImageViewer extends CloneableTopComponent {
     }
     
     /** Gets grid button.*/
-    private JButton getGridButton() {
+    private JToggleButton getGridButton() {
         // PENDING buttons should have their own icons.
-        final JButton button = new JButton(" # "); // NOI18N
+        final JToggleButton button = new JToggleButton((NbBundle.getBundle(ImageViewer.class).getString("LBL_ShowHideGrid"))); // NOI18N
         button.setToolTipText (NbBundle.getBundle(ImageViewer.class).getString("LBL_ShowHideGrid"));
         button.getAccessibleContext().setAccessibleDescription(NbBundle.getBundle(ImageViewer.class).getString("ACS_Grid_BTN"));
         button.setMnemonic(NbBundle.getBundle(ImageViewer.class).getString("ACS_Grid_BTN_Mnem").charAt(0));
+
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 showGrid = !showGrid;
