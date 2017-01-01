@@ -124,8 +124,8 @@ public class ImageViewer extends CloneableTopComponent {
     private PropertyChangeListener nameChangeL;
     
     /** collection of all buttons in the toolbar */
-    private final Collection/*<JButton>*/ toolbarButtons
-                                          = new ArrayList/*<JButton>*/(11);
+    private final Collection/*<JButton>*/ toolbarButtons = new ArrayList/*<JButton>*/(11);
+    private final Collection toolbarLabels = new ArrayList(2);
     
     private Component view;
     
@@ -558,17 +558,21 @@ public class ImageViewer extends CloneableTopComponent {
         toolBar.add(button = getGridButton());
         toolbarButtons.add(button);
         
+        JLabel label;
+        
         // Image Dimension
-        // TODO: Make label, not button
         toolBar.addSeparator(new Dimension(11, 0));
-        toolBar.add(button = new JButton("Dimensions: " + imageWidth + " x " + imageHeight));
-        toolbarButtons.add(button);
+        toolBar.add(label = new JLabel("Dimensions: " + imageWidth + " x " + imageHeight));
+        toolbarLabels.add(label);
         
         // Image File Size in KB
-        // TODO: Make label, not button
         toolBar.addSeparator(new Dimension(11, 0));
-        toolBar.add(button = new JButton("Size: " + imageSize + "kb"));
-        toolbarButtons.add(button);
+        toolBar.add(label = new JLabel("Size: " + imageSize + "kb"));
+        toolbarLabels.add(label);
+        
+        for (Iterator it = toolbarLabels.iterator(); it.hasNext(); ) {
+            ((JLabel) it.next()).setFocusable(false);
+        }
 
         for (Iterator it = toolbarButtons.iterator(); it.hasNext(); ) {
             ((JButton) it.next()).setFocusable(false);
